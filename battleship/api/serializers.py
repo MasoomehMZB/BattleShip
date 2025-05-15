@@ -8,13 +8,13 @@ class GameSerializer(serializers.ModelSerializer):
 
     def get_creator(self, game):
         return game.creator.username
-
+    
     def get_opponent(self, game):
-        return game.opponent.username
+        return game.opponent.username if game.opponent else None
 
     class Meta:
         model = Game
-        fields = ['difficulty', 'id']
+        fields = ['difficulty', 'id',  'creator', 'opponent']
         read_only_fields = ['status', 'creator', 'opponent', 'created_at', 'winner', 'turn']
         
         

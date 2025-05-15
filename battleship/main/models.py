@@ -1,3 +1,4 @@
+from itertools import chain
 from django.db import models
 
 from django.db import models
@@ -25,6 +26,7 @@ class Player(AbstractUser):
             self.level = 'Expert'
         super().save(*args, **kwargs)
         
+        
 class Game(models.Model):
   
     GAME_DIFF=(
@@ -39,10 +41,10 @@ class Game(models.Model):
         (2, 'In Progress'),
     )
     
-    creator = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='creator')
-    opponent = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='opponent', null=True)
+    creator = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='games_created')
+    opponent = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='games_competed', null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    difficulty = models.IntegerField(choices=GAME_DIFF, default=2)
+    difficulty = models.IntegerField(choices=GAME_DIFF)
     status = models.IntegerField(choices=GAME_STATUS)
     winner = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='won_games', null=True, blank=True)
     turn = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='turn_games', null=True, blank=True)
@@ -81,6 +83,9 @@ class Game(models.Model):
         else:
             self.turn = self.creator
         self.save()
+    
+    def __str__(self):
+        return f"Game {self.id} - {self.creator.username} vs {self.opponent.username if self.opponent else '{Waiting for opponent}'}"
     
     
 class Board(models.Model):

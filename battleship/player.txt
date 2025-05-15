@@ -5,12 +5,16 @@
   },
   {
     "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NzM5MjUzNiwiaWF0IjoxNzQ3MzA2MTM2LCJqdGkiOiJmMjY3M2Q1NjBiY2M0YTUyYTEyMzRlZjIxMTgyMzc0OCIsInVzZXJfaWQiOjJ9.gYM1Vo3AqjKdElRGetvPWPuRu6IRw1ayhBrQemvdg-Y",
-    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3MzA2NDM2LCJpYXQiOjE3NDczMDYxMzYsImp0aSI6IjYzNjQ2OThjYTI4NDQxYjI4YzcyYmY0YTMyOTJlMWVhIiwidXNlcl9pZCI6Mn0.MiWkP4V-moH8noRPyy1Ucqyj2GrJr2tRF1wa6-NtMRI"
+   eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3MzE2NTQzLCJpYXQiOjE3NDczMDYxMzYsImp0aSI6ImVkN2MyZTZmMzU5NDRlZjRiMDQ1MTBlY2E5NmY0MTllIiwidXNlcl9pZCI6Mn0.RWNcWRnavvePaO82Toad8vAjWCtKIrhjTYfjVOZb9NI
     },
   {
     "username": "player_beta",
     "password": "1234"
   },
+  {
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NzM5ODY3MiwiaWF0IjoxNzQ3MzEyMjcyLCJqdGkiOiI3YmI3MTI5MTllNjA0YWZlYTZiZDIwNGM5M2IxZTQxMyIsInVzZXJfaWQiOjN9.geFe8_YoNcCox7oi2snKKfRzWvDP-caV4e18O-197fI",
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3MzE1ODcyLCJpYXQiOjE3NDczMTIyNzIsImp0aSI6IjZiMTU3MWEwYTcxNjQ2NjdhMjBmZDFlNDA4YTRiYjU0IiwidXNlcl9pZCI6M30.DUZ47DnQNkfZ7BVleYT6DHZBb066me8bLZsWT5f9HCo"
+}
   {
     "username": "player_gamma",
     "password": "1234"

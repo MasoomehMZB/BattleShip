@@ -1,4 +1,5 @@
 # Django imports
+from django.forms import ValidationError
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 
@@ -14,16 +15,22 @@ from main.models import Board, Game, Player, Ship, Shot
 
 
 class CreateGameAPIView(CreateAPIView):
-    model = Game
     serializer_class = GameSerializer
-    
-    def perform_create(self, serializer):
-        game = serializer.save()
-        game.creator = self.request.user
-        game.status = 0
-        game.save()
-        return game
 
+    def create(self, request, *args, **kwargs):
+        player = self.request.user
+
+        # Check if player has an unfinished game
+        if (request.user.games_created.exclude(status=1).exists() or
+            request.user.games_competed.exclude(status=1).exists()):
+            return Response({'error': 'You have already joined a game.'}, status=400)
+
+        # Create a new game
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        game = serializer.save(creator=player, status=0)
+        
+        return Response(serializer.data, status=201)
 
 class JoinGameView(APIView):
 
@@ -31,11 +38,13 @@ class JoinGameView(APIView):
         game_id = kwargs.get('game_id')
         game = get_object_or_404(Game, id=game_id)
         
-        if game.status != 0:  # status is integer field, 0 means Waiting
-                return Response({'error': 'Game is not available.'}, status=400)
+        if game.status != 0:  # Waiting
+                return Response({'error': 'Game is already full.'}, status=400)
             
-        if game.opponent:
-            return Response({'error': 'Game is already full.'}, status=400)
+        # Check if player has an unfinished game
+        if (request.user.games_created.exclude(status=1).exists() or
+            request.user.games_competed.exclude(status=1).exists()):
+            return Response({'error': 'You have already joined a game.'}, status=400)
         
         if game.creator == request.user:
             return Response({'error': 'You cannot join your own game.'}, status=400)
