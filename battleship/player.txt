@@ -1,0 +1,18 @@
+[
+  {
+    "username": "player_alpha",
+    "password": "1234"
+  },
+  {
+    "username": "player_beta",
+    "password": "1234"
+  },
+  {
+    "username": "player_gamma",
+    "password": "1234"
+  },
+  {
+    "username": "player_delta",
+    "password": "1234"
+  }
+]

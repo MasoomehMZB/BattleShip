@@ -206,16 +206,10 @@ class RegisterAPIView(APIView):
             username=username,
             password=password
         )
+        
+        serilized_player = PlayerSerializer(player)
 
-        return Response(
-            {
-                'success': True,
-                'user': {
-                    'id': player.id,
-                    'username': player.username
-                }
-            }, status=201
-        )
+        return Response(serilized_player.data, status=201)
 
 # List history of finished games endpoint
 class MyGamesAPIView(ListAPIView):

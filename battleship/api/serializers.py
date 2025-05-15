@@ -21,7 +21,7 @@ class GameSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ['username', 'xp', 'level', 'point']
+        fields = ['username', 'level', 'points', 'total_games']
         
 class ShipSerializer(serializers.ModelSerializer):
     class Meta:
