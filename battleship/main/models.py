@@ -108,14 +108,10 @@ class Board(models.Model):
     def __str__(self):
         return f"{self.player.username}'s board for Game {self.game.id}"
     
-     
-    def place_ships(self, ships_data):
-
+    def validate_ships(self, ships_data):
         ship_rules, _ = self.game.ship_rules()
         ship_count = defaultdict(int)
         occupied_cells = set()
-
-        placed_ships = []
 
         for ship_data in ships_data:
             size = ship_data['size']
@@ -127,31 +123,36 @@ class Board(models.Model):
             if ship_count[size] > ship_rules.get(size, 0):
                 raise ValueError(f"Too many ships of size {size}")
 
-            ship = Ship(
+            temp_ship = Ship(
                 size=size,
                 start_x=start_x,
                 start_y=start_y,
                 is_vertical=is_vertical,
-                board=self
+                board=self  # we can still use self even if not saved yet
             )
 
-            if not ship.is_within_bounds():
+            if not temp_ship.is_within_bounds():
                 raise ValueError(f"Ship at ({start_x}, {start_y}) is out of bounds.")
 
-            for cell in ship.get_occupied_cells():
+            for cell in temp_ship.get_occupied_cells():
                 if cell in occupied_cells:
                     raise ValueError(f"Ship overlap at cell {cell}.")
                 occupied_cells.add(cell)
-
-            placed_ships.append(ship)
-
-        for ship in placed_ships:
-            ship.save()
+     
+    def place_ships(self, ships_data):
+        for ship_data in ships_data:
+            Ship.objects.create(
+                board=self,
+                size=ship_data['size'],
+                start_x=ship_data['start_x'],
+                start_y=ship_data['start_y'],
+                is_vertical=ship_data.get('is_vertical', False),
+            )
 
    
 class Ship(models.Model):
     # Ship sizes and their corresponding dimensions
-    map_size_shape = {
+    map_size_to_shape = {
         1: (0, 1),
         2: (0, 2),
         3: (0, 3),
@@ -170,7 +171,7 @@ class Ship(models.Model):
     @property
     def dimensions(self):
         # Returns (width, height) depending on orientation
-        width, height = self.map_size_shape[self.size]
+        width, height = self.map_size_to_shape[self.size]
         return (height, width) if self.is_vertical else (width, height)
     
     def get_occupied_cells(self):
@@ -182,9 +183,12 @@ class Ship(models.Model):
         ]
 
     def is_within_bounds(self):
-        size = self.board.size
+        size = self.board.size - 1
         width, height = self.dimensions
         return self.start_x + width <= size and self.start_y + height <= size
+    
+    def __str__(self):
+        return f"Ship of size {self.size} at ({self.start_x}, {self.start_y}) for Game {self.board.game.id}"
     
 
     # def place_ship(self):

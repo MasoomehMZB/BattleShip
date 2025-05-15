@@ -59,22 +59,27 @@ class ArrangeBoardView(APIView):
     def post(self, request, *args, **kwargs):
         game = get_object_or_404(Game, id=kwargs.get('game_id'))
         
-        if request.user != game.creator or request.user != game.opponent:
+        if request.user != game.creator and request.user != game.opponent:
             return Response({'error': 'You are not a player in this game.'}, status=403)
         
-        if game.status != 1:
+        if game.status != 2:  # in_progress
             return Response({'error': 'Game is not in the setup phase.'}, status=400)
+        
+        if game.boards.filter(player=request.user).exists():
+            return Response({'error': 'You have already arranged your board.'}, status=400)
 
         ships_data = request.data.get('ships', [])
         if not ships_data:
             return Response({'error': 'No ships provided.'}, status=400)
 
-        board = Board.objects.create(player=request.user, game=game)
+        board = Board(game=game, player=request.user)
 
         serializer = ShipSerializer(data=ships_data, many=True)
         serializer.is_valid(raise_exception=True)
 
         try:
+            board.validate_ships(serializer.validated_data)
+            board.save()
             board.place_ships(serializer.validated_data)
         except ValueError as e:
             return Response({'error': str(e)}, status=400)
