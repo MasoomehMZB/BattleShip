@@ -182,7 +182,14 @@ class HitShipview(APIView):
         else:
             return Response({'hit': hit}, status=201)
 
-# Logout endpoint
+# Acount data endpoint
+class AccountDataView(APIView):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        player = Player.objects.get(username=user.username)
+        serializer = PlayerSerializer(player)
+        return Response(serializer.data, status=200)
+    
 # Register endpoint
 class RegisterAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -207,9 +214,7 @@ class RegisterAPIView(APIView):
             password=password
         )
         
-        serilized_player = PlayerSerializer(player)
-
-        return Response(serilized_player.data, status=201)
+        return Response({'messege': 'Registeration successful'}, status=201)
 
 # List history of finished games endpoint
 class MyGamesAPIView(ListAPIView):

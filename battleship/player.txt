@@ -4,6 +4,10 @@
     "password": "1234"
   },
   {
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0NzM5MjUzNiwiaWF0IjoxNzQ3MzA2MTM2LCJqdGkiOiJmMjY3M2Q1NjBiY2M0YTUyYTEyMzRlZjIxMTgyMzc0OCIsInVzZXJfaWQiOjJ9.gYM1Vo3AqjKdElRGetvPWPuRu6IRw1ayhBrQemvdg-Y",
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3MzA2NDM2LCJpYXQiOjE3NDczMDYxMzYsImp0aSI6IjYzNjQ2OThjYTI4NDQxYjI4YzcyYmY0YTMyOTJlMWVhIiwidXNlcl9pZCI6Mn0.MiWkP4V-moH8noRPyy1Ucqyj2GrJr2tRF1wa6-NtMRI"
+    },
+  {
     "username": "player_beta",
     "password": "1234"
   },
