@@ -2,7 +2,7 @@ from django.db import models
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Player(AbstractUser):
@@ -42,14 +42,14 @@ class Game(models.Model):
     creator = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='creator')
     opponent = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='opponent', null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    difficulty = models.CharField(max_length=1, choices=GAME_DIFF, default=2)
-    status = models.CharField(max_length=1, choices=GAME_STATUS)
+    difficulty = models.IntegerField(choices=GAME_DIFF, default=2)
+    status = models.IntegerField(choices=GAME_STATUS)
     winner = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='won_games', null=True, blank=True)
     turn = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='turn_games', null=True, blank=True)
     
 
     def ship_rules(self):
-        if self.difficulty == 'Easy':
+        if self.difficulty == 0:  # Easy
             # {Ship size: count}, board size 
             return {
                 1: 1,
@@ -57,7 +57,7 @@ class Game(models.Model):
                 3: 1,
                 4: 1,
             }, 10
-        elif self.difficulty == 'Medium':
+        elif self.difficulty == 1:  # Medium
             return {
                 1: 1,
                 2: 2,
@@ -65,7 +65,7 @@ class Game(models.Model):
                 4: 1,
                 5: 1,
             }, 15
-        elif self.difficulty == 'Hard':
+        elif self.difficulty == 2:  # Hard
             return {
                 1: 1,
                 2: 2,
@@ -89,11 +89,11 @@ class Board(models.Model):
     size = models.IntegerField(default=10)
 
     def save(self, *args, **kwargs):
-        if self.game.difficulty == 'Easy':
+        if self.game.difficulty == 0:  # Easy
             self.size = 10
-        elif self.game.difficulty == 'Medium':
+        elif self.game.difficulty == 1:  # Medium
             self.size = 15
-        elif self.game.difficulty == 'Hard':
+        elif self.game.difficulty == 2:  # Hard
             self.size = 20
         super().save(*args, **kwargs)
         
@@ -115,7 +115,7 @@ class Ship(models.Model):
     
     is_vertical = models.BooleanField(default=False)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='ships')
-    size = models.IntegerField(min=1, max=5)
+    size = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(6)])
     start_x = models.PositiveIntegerField()
     start_y = models.PositiveIntegerField()
     sunk = models.BooleanField(default=False)

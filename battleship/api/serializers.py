@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..main.models import Game, Player, Ship, Shot
+from main.models import Game, Player, Ship, Shot
 
 class GameSerializer(serializers.ModelSerializer):
     creator = serializers.SerializerMethodField()

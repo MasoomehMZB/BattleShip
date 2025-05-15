@@ -1,14 +1,16 @@
-from django.shortcuts import render
-
+# Django imports
 from django.shortcuts import get_object_or_404, render
+from django.db.models import Q
+
+# DRF imports
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from serializers import GameSerializer, PlayerSerializer, ShipSerializer, ShotSerializer
-from ..main.models import Board, Game, Player, Ship, Shot
-from django.db.models import Q
+# Local imports
+from api.serializers import GameSerializer, PlayerSerializer, ShipSerializer, ShotSerializer
+from main.models import Board, Game, Player, Ship, Shot
 
 
 class CreateGameAPIView(CreateAPIView):
