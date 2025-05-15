@@ -57,56 +57,27 @@ class JoinGameView(APIView):
 
 class ArrangeBoardView(APIView):
     def post(self, request, *args, **kwargs):
-        game_id = kwargs.get('game_id')
-        game = get_object_or_404(Game, id=game_id)
+        game = get_object_or_404(Game, id=kwargs.get('game_id'))
+        
+        if request.user != game.creator or request.user != game.opponent:
+            return Response({'error': 'You are not a player in this game.'}, status=403)
+        
+        if game.status != 1:
+            return Response({'error': 'Game is not in the setup phase.'}, status=400)
 
         ships_data = request.data.get('ships', [])
         if not ships_data:
             return Response({'error': 'No ships provided.'}, status=400)
 
-        # Create the board for the player
         board = Board.objects.create(player=request.user, game=game)
 
-        # Validate ships
         serializer = ShipSerializer(data=ships_data, many=True)
         serializer.is_valid(raise_exception=True)
-        
-        # Check if the ships are valid in game difficulty
-        ship_rules, _ = game.ship_rules()
-        if not all(ship_data['size'] in ship_rules for ship_data in serializer.validated_data):
-            return Response({'error': 'Invalid ship sizes for the game difficulty.'}, status=400)
 
-        occupied_cells = set()
-
-        for ship_data in serializer.validated_data:
-            size = ship_data['size']
-            start_x = ship_data['start_x']
-            start_y = ship_data['start_y']
-            is_vertical = ship_data.get('is_vertical', False)
-
-            # Create a temporary Ship instance (not saved)
-            temp_ship = Ship(
-                size=size,
-                start_x=start_x,
-                start_y=start_y,
-                is_vertical=is_vertical,
-                board=board  # needed for FK; we can use it now since it's created
-            )
-
-            if not temp_ship.is_within_bounds():
-                return Response({
-                    'error': f'Ship at ({start_x}, {start_y}) is out of bounds.'
-                }, status=400)
-
-            for cell in temp_ship.get_occupied_cells():
-                if cell in occupied_cells:
-                    return Response({
-                        'error': f'Ship overlap at cell {cell}.' 
-                    }, status=400)
-                occupied_cells.add(cell)
-
-            # Save valid ship
-            temp_ship.save()
+        try:
+            board.place_ships(serializer.validated_data)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=400)
 
         return Response({'message': 'Board populated successfully.'}, status=201)
     

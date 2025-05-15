@@ -1,6 +1,8 @@
 from itertools import chain
 from django.db import models
 
+from collections import defaultdict
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -105,11 +107,51 @@ class Board(models.Model):
 
     def __str__(self):
         return f"{self.player.username}'s board for Game {self.game.id}"
+    
+     
+    def place_ships(self, ships_data):
+
+        ship_rules, _ = self.game.ship_rules()
+        ship_count = defaultdict(int)
+        occupied_cells = set()
+
+        placed_ships = []
+
+        for ship_data in ships_data:
+            size = ship_data['size']
+            start_x = ship_data['start_x']
+            start_y = ship_data['start_y']
+            is_vertical = ship_data.get('is_vertical', False)
+
+            ship_count[size] += 1
+            if ship_count[size] > ship_rules.get(size, 0):
+                raise ValueError(f"Too many ships of size {size}")
+
+            ship = Ship(
+                size=size,
+                start_x=start_x,
+                start_y=start_y,
+                is_vertical=is_vertical,
+                board=self
+            )
+
+            if not ship.is_within_bounds():
+                raise ValueError(f"Ship at ({start_x}, {start_y}) is out of bounds.")
+
+            for cell in ship.get_occupied_cells():
+                if cell in occupied_cells:
+                    raise ValueError(f"Ship overlap at cell {cell}.")
+                occupied_cells.add(cell)
+
+            placed_ships.append(ship)
+
+        for ship in placed_ships:
+            ship.save()
 
    
 class Ship(models.Model):
     # Ship sizes and their corresponding dimensions
-    size_map = {
+    map_size_shape = {
         1: (0, 1),
         2: (0, 2),
         3: (0, 3),
@@ -128,7 +170,7 @@ class Ship(models.Model):
     @property
     def dimensions(self):
         # Returns (width, height) depending on orientation
-        width, height = self.size_map[self.size]
+        width, height = self.map_size_shape[self.size]
         return (height, width) if self.is_vertical else (width, height)
     
     def get_occupied_cells(self):
