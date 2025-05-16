@@ -162,6 +162,7 @@ class AccountDataView(APIView):
     
 # Register endpoint
 class RegisterAPIView(APIView):
+    permission_classes = []
     def post(self, request, *args, **kwargs):
         username = request.data.get('username')
         password = request.data.get('password')
