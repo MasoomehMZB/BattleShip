@@ -1,5 +1,7 @@
-from itertools import chain
+import operator
+from functools import reduce
 from django.db import models
+from django.db.models import Q
 
 from collections import defaultdict
 
@@ -51,6 +53,8 @@ class Game(models.Model):
     winner = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='won_games', null=True, blank=True)
     turn = models.ForeignKey(Player, on_delete=models.SET_NULL, related_name='turn_games', null=True, blank=True)
     
+    def get_opponent_board(self, user):
+        return self.boards.exclude(player=user).first()
 
     def ship_rules(self):
         if self.difficulty == 0:  # Easy
@@ -85,6 +89,13 @@ class Game(models.Model):
         else:
             self.turn = self.creator
         self.save()
+    
+    def set_winner(self, player):
+        self.winner = player
+        self.status = 1  # finished
+        self.save()
+        player.points += 200
+        player.save()
     
     def __str__(self):
         return f"Game {self.id} - {self.creator.username} vs {self.opponent.username if self.opponent else '{Waiting for opponent}'}"
@@ -128,7 +139,7 @@ class Board(models.Model):
                 start_x=start_x,
                 start_y=start_y,
                 is_vertical=is_vertical,
-                board=self  # we can still use self even if not saved yet
+                board=self 
             )
 
             if not temp_ship.is_within_bounds():
@@ -140,15 +151,48 @@ class Board(models.Model):
                 occupied_cells.add(cell)
      
     def place_ships(self, ships_data):
-        for ship_data in ships_data:
-            Ship.objects.create(
-                board=self,
-                size=ship_data['size'],
-                start_x=ship_data['start_x'],
-                start_y=ship_data['start_y'],
-                is_vertical=ship_data.get('is_vertical', False),
-            )
+        for data in ships_data:
+            Ship.create_from_data(self, data)
+        
+    @classmethod
+    def create_from_data(cls, board, ship_data):
+        return cls.objects.create(
+        board=board,
+        size=ship_data['size'],
+        start_x=ship_data['start_x'],
+        start_y=ship_data['start_y'],
+        is_vertical=ship_data.get('is_vertical', False),
+        )
+    
+    def register_hit(self, x, y):
+        # Check if the shot is a hit
+        hit = False
+        hit_ship = None
+        for ship in self.ships.filter(sunk=False):
+            occupied_cells = ship.get_occupied_cells()
+            if (x, y) in occupied_cells:
+                hit = True
+                # Count hits so far
+                hit_cells = Shot.objects.filter(board=self, hit=True).filter(
+                    reduce(operator.or_, [Q(x=x, y=y) for (x, y) in occupied_cells])).count()
 
+                if hit_cells + 1 >= len(occupied_cells):
+                    ship.sunk = True
+                    ship.save()
+                    
+                hit_ship = ship
+                return hit, hit_ship
+        return hit, hit_ship
+
+    
+    def validate_shot(self, x, y):
+        if x < 0 or x >= self.size or y < 0 or y >= self.size:
+            raise ValueError("Shot out of bounds.")
+        if Shot.objects.filter(board=self, x=x, y=y).exists():
+            raise ValueError("Shot already taken.")
+    
+    def all_ships_sunk(self):
+        return not self.ships.filter(sunk=False).exists()
    
 class Ship(models.Model):
     # Ship sizes and their corresponding dimensions
@@ -176,11 +220,7 @@ class Ship(models.Model):
     
     def get_occupied_cells(self):
         width, height = self.dimensions
-        return [
-            (self.start_x + dx, self.start_y + dy)
-            for dx in range(width)
-            for dy in range(height)
-        ]
+        return [(self.start_x + dx, self.start_y + dy) for dx in range(width + 1) for dy in range(height + 1)]
 
     def is_within_bounds(self):
         size = self.board.size - 1
@@ -189,24 +229,7 @@ class Ship(models.Model):
     
     def __str__(self):
         return f"Ship of size {self.size} at ({self.start_x}, {self.start_y}) for Game {self.board.game.id}"
-    
 
-    # def place_ship(self):
-    #     if self.is_vertical:
-    #         if self.start_y + int(self.size) > self.board.length:
-    #             raise ValidationError('Ship is out of bounds.')     
-    #     else:
-    #         if self.start_x + int(self.size) > self.board.width:
-    #             raise ValidationError('Ship is out of bounds.')
-
-    # def check_ship_exist(self, x, y):
-    #     if self.is_vertical:
-    #         if y in range(self.start_y, self.start_y + int(self.size)):
-    #             return True
-    #     else:
-    #         if x in range(self.start_x, self.start_x + int(self.size)):
-    #             return True
-    #     return False
         
 class Shot(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='shots')

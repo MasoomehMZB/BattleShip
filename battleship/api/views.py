@@ -83,89 +83,74 @@ class ArrangeBoardView(APIView):
             board.place_ships(serializer.validated_data)
         except ValueError as e:
             return Response({'error': str(e)}, status=400)
+        
+        # Set the turn after both boards are ready
+        if game.board.count() == 2:
+            game.turn = game.creator
 
         return Response({'message': 'Board populated successfully.'}, status=201)
     
     
 
-class HitShipview(APIView):
-
+class HitShipView(APIView):
     def post(self, request, *args, **kwargs):
-        game_id = kwargs.get('game_id')
-        game = get_object_or_404(Game, id=game_id)
-        
+        game = get_object_or_404(Game, id=kwargs.get('game_id'))
+
         if game.turn != request.user:
             return Response({'error': 'Not your turn.'}, status=400)
 
-        # Get opponent's board
-        board = game.boards.exclude(player=request.user).first()
-        if not board:
+        if request.user != game.creator and request.user != game.opponent:
+            return Response({'error': 'You are not a player in this game.'}, status=403)
+        
+        opponent_board = game.get_opponent_board(request.user)
+        if not opponent_board:
             return Response({'error': 'Opponent board not found.'}, status=404)
 
-        # Validate shot data
-        serializer = ShotSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        x = serializer.validated_data['x']
-        y = serializer.validated_data['y']
-        
-        # Check if the shot is already taken
-        if Shot.objects.filter(board=board, x=x, y=y).exists():
-            return Response({'error': 'Shot already taken.'}, status=400)
+        shot_serializer = ShotSerializer(data=request.data)
+        shot_serializer.is_valid(raise_exception=True)
+        x, y = shot_serializer.validated_data['x'], shot_serializer.validated_data['y']
 
-        # Check if the shot is a hit
-        hit = False
-        hit_ship = None
-        for ship in board.ships.filter(sunk=False):
-            ship_width, ship_height = ship.dimensions
-            x_range = range(ship.start_x, ship.start_x + ship_width)
-            y_range = range(ship.start_y, ship.start_y + ship_height)
-            if x in x_range and y in y_range:
-                # Check if the ship is sunk
-                hit_cells = 0
-                for xi in x_range:
-                    for yi in y_range:
-                        if Shot.objects.filter(board=board, x=xi, y=yi, hit=True).exists():
-                            hit_cells += 1
+        try:
+            opponent_board.validate_shot(x, y)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=400)
 
-                if hit_cells + 1 >= ship_width * ship_height:
-                    ship.sunk = True
-                    ship.save()
-                hit_ship = ship
-                hit = True
-                break
-        
-        # Save the shot
+        hit, hit_ship = opponent_board.register_hit(x, y)
+
+        # Create the shot
         Shot.objects.create(
-            board=board,
+            board=opponent_board,
             shooter=request.user,
             x=x,
             y=y,
             hit=hit
         )
-        
-        # Switch turn
+
+        # Check if all opponent ships are sunk
+        if opponent_board.all_ships_sunk():
+            game.set_winner(request.user)
+
+            return Response({
+                'message': 'Game over. You won!',
+                'game': GameSerializer(game).data,
+                'winner': PlayerSerializer(request.user).data
+            }, status=200)
+
+        # Switch turns if game isn't over
         game.switch_turn()
-        game.save()
-        
-        # Check if the game has ended
-        game_on = board.ships.filter(sunk=False).exists()
-        if not game_on:
-            game.winner = request.user
-            game.status = 1  # finished
-            game.save()
-            game_serializer = GameSerializer(game)
-            
-            # Update player scores
-            game.winner.points += 200
-            game.winner.save()
-            player_serializer = PlayerSerializer(game.winner)
-                
-            return Response({'message': 'Game over. You won!', 'game': game_serializer.data, 'winner': player_serializer.data}, status=200)
-        
-        if hit_ship:
-            return Response({'hit': hit, 'ship': hit_ship}, status=201)
-        else:
-            return Response({'hit': hit}, status=201)
+
+        response_data = {'hit': hit}
+        if hit and hit_ship:
+            response_data['ship'] = {
+                'size': hit_ship.size,
+                'start_x': hit_ship.start_x,
+                'start_y': hit_ship.start_y,
+                'is_vertical': hit_ship.is_vertical
+            }
+
+        return Response(response_data, status=201)
+    
+
 
 # Acount data endpoint
 class AccountDataView(APIView):

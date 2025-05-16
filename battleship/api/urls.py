@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import AccountDataView, ArrangeBoardView, CreateGameAPIView, JoinGameView, RegisterAPIView
+from api.views import AccountDataView, ArrangeBoardView, CreateGameAPIView, HitShipView, JoinGameView, RegisterAPIView
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view()),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('create-game/', CreateGameAPIView.as_view()),
     path('join-game/<int:game_id>/', JoinGameView.as_view(), name='join-game'),
     path('arrange-board/<int:game_id>/', ArrangeBoardView.as_view(), name='arrange-board'),
+    path('hit-ship/<int:game_id>/', HitShipView.as_view(), name='hit-ship'),
     ]

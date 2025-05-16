@@ -27,6 +27,7 @@ class ShipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ship
         fields = ['size', 'start_x', 'start_y', 'is_vertical']
+        read_only_fields = ['id', 'sunk']
         
 
 class ShotSerializer(serializers.ModelSerializer):
