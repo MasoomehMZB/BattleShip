@@ -30,6 +30,9 @@ class CreateGameAPIView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         game = serializer.save(creator=player, status=0)
         
+        request.user.total_games += 1
+        request.user.save()
+        
         return Response(serializer.data, status=201)
 
 class JoinGameView(APIView):
@@ -51,6 +54,8 @@ class JoinGameView(APIView):
         
         game.opponent = request.user
         game.status = 2  # in_progress
+        request.user.total_games += 1
+        request.user.save()
         game.save()
         return Response({'message': 'Game joined successfully.'}, status=200)
 
