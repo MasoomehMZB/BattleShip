@@ -73,6 +73,7 @@ class ArrangeBoardView(APIView):
             return Response({'error': 'No ships provided.'}, status=400)
 
         board = Board(game=game, player=request.user)
+        board.set_size()
 
         serializer = ShipSerializer(data=ships_data, many=True)
         serializer.is_valid(raise_exception=True)
@@ -84,15 +85,17 @@ class ArrangeBoardView(APIView):
         except ValueError as e:
             return Response({'error': str(e)}, status=400)
         
+
         # Set the turn after both boards are ready
-        if game.board.count() == 2:
+        if game.boards.count() == 2:
             game.turn = game.creator
+            game.save()
 
         return Response({'message': 'Board populated successfully.'}, status=201)
     
     
 
-class HitShipView(APIView):
+class HitView(APIView):
     def post(self, request, *args, **kwargs):
         game = get_object_or_404(Game, id=kwargs.get('game_id'))
 
@@ -139,16 +142,13 @@ class HitShipView(APIView):
         # Switch turns if game isn't over
         game.switch_turn()
 
-        response_data = {'hit': hit}
+ 
         if hit and hit_ship:
-            response_data['ship'] = {
-                'size': hit_ship.size,
-                'start_x': hit_ship.start_x,
-                'start_y': hit_ship.start_y,
-                'is_vertical': hit_ship.is_vertical
-            }
+            serialized_ship = ShipSerializer(hit_ship).data
+        else:
+            serialized_ship = None
 
-        return Response(response_data, status=201)
+        return Response({'hit': hit, 'ship':serialized_ship}, status=201)
     
 
 

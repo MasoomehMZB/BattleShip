@@ -37,6 +37,7 @@ class Game(models.Model):
         (0, 'Easy'),
         (1, 'Medium'),
         (2, 'Hard'),
+        (3, 'Dummy'),
     )
     
     GAME_STATUS=(
@@ -82,6 +83,11 @@ class Game(models.Model):
                 5: 1,
                 6: 1,
             }, 20
+        elif self.difficulty == 3:  # Dummy
+            return {
+                1: 1,
+                2: 1,
+            }, 3
     
     def switch_turn(self):
         if self.turn == self.creator:
@@ -104,16 +110,17 @@ class Game(models.Model):
 class Board(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='boards')
-    size = models.IntegerField(default=10)
+    size = models.IntegerField()
 
-    def save(self, *args, **kwargs):
+    def set_size(self):
         if self.game.difficulty == 0:  # Easy
             self.size = 10
         elif self.game.difficulty == 1:  # Medium
             self.size = 15
         elif self.game.difficulty == 2:  # Hard
             self.size = 20
-        super().save(*args, **kwargs)
+        elif self.game.difficulty == 3:  # Dummy
+            self.size = 3
         
 
     def __str__(self):
@@ -153,16 +160,6 @@ class Board(models.Model):
     def place_ships(self, ships_data):
         for data in ships_data:
             Ship.create_from_data(self, data)
-        
-    @classmethod
-    def create_from_data(cls, board, ship_data):
-        return cls.objects.create(
-        board=board,
-        size=ship_data['size'],
-        start_x=ship_data['start_x'],
-        start_y=ship_data['start_y'],
-        is_vertical=ship_data.get('is_vertical', False),
-        )
     
     def register_hit(self, x, y):
         # Check if the shot is a hit
@@ -223,9 +220,19 @@ class Ship(models.Model):
         return [(self.start_x + dx, self.start_y + dy) for dx in range(width + 1) for dy in range(height + 1)]
 
     def is_within_bounds(self):
-        size = self.board.size - 1
+        board_size = self.board.size - 1
         width, height = self.dimensions
-        return self.start_x + width <= size and self.start_y + height <= size
+        return self.start_x + width <= board_size and self.start_y + height <= board_size
+
+    @classmethod
+    def create_from_data(cls, board, ship_data):
+        return cls.objects.create(
+        board=board,
+        size=ship_data['size'],
+        start_x=ship_data['start_x'],
+        start_y=ship_data['start_y'],
+        is_vertical=ship_data.get('is_vertical', False),
+        )
     
     def __str__(self):
         return f"Ship of size {self.size} at ({self.start_x}, {self.start_y}) for Game {self.board.game.id}"

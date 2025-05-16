@@ -14,7 +14,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ['difficulty', 'id',  'creator', 'opponent']
+        fields = '__all__'
         read_only_fields = ['status', 'creator', 'opponent', 'created_at', 'winner', 'turn']
         
         
@@ -26,7 +26,7 @@ class PlayerSerializer(serializers.ModelSerializer):
 class ShipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ship
-        fields = ['size', 'start_x', 'start_y', 'is_vertical']
+        fields = ['size', 'start_x', 'start_y', 'is_vertical', 'sunk', 'id']
         read_only_fields = ['id', 'sunk']
         
 
