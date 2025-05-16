@@ -5,6 +5,19 @@ from main.models import Game, Player, Ship, Shot
 class GameSerializer(serializers.ModelSerializer):
     creator = serializers.SerializerMethodField()
     opponent = serializers.SerializerMethodField()
+    winner = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    difficulty = serializers.SerializerMethodField()
+    
+    def get_difficulty(self, game):
+        return game.get_difficulty_display()
+
+    def get_status(self, game):
+        return game.get_status_display()
+    
+    def get_winner(self, game):
+        return game.winner.username if game.winner else None
+    
 
     def get_creator(self, game):
         return game.creator.username
@@ -14,7 +27,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ['difficulty', 'id',  'creator', 'opponent']
+        fields = ['difficulty', 'id',  'creator', 'opponent', 'status', 'winner', 'created_at']
         read_only_fields = ['status', 'creator', 'opponent', 'created_at', 'winner', 'turn']
         
         
