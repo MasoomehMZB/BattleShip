@@ -15,6 +15,7 @@ from main.models import Board, Game, Player, Ship, Shot
 
 
 class CreateGameAPIView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = GameSerializer
 
     def create(self, request, *args, **kwargs):
@@ -28,7 +29,11 @@ class CreateGameAPIView(CreateAPIView):
         # Create a new game
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        game = serializer.save(creator=player, status=0)
+        game = serializer.save(
+            creator=player,
+            status=0,
+            difficulty=request.data.get('difficulty', 0)
+            )
         
         request.user.total_games += 1
         request.user.save()
