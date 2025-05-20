@@ -241,6 +241,22 @@ class WaitingGamesListView(ListAPIView):
         current_user = self.request.user
         games = Game.objects.filter(status=0, opponent__isnull=True).exclude(creator=current_user)
         return games
+    
+# Get board's ships endpoint
+class GetBoardShipsView(ListAPIView):
+    serializer_class = ShipSerializer
+
+    def get_queryset(self):
+        game_id = self.kwargs['game_id']
+        game = get_object_or_404(Game, id=game_id)
+
+        if self.request.user != game.creator and self.request.user != game.opponent:
+            raise PermissionDenied("You are not a player in this game.")
+
+        board = get_object_or_404(Board, game=game, player=self.request.user)
+        return board.ships.all()
+
+    
 
         
 
