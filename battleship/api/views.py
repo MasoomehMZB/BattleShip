@@ -15,6 +15,7 @@ from main.models import Board, Game, Player, Ship, Shot
 
 
 class CreateGameAPIView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = GameSerializer
 
     def create(self, request, *args, **kwargs):
@@ -28,7 +29,14 @@ class CreateGameAPIView(CreateAPIView):
         # Create a new game
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        game = serializer.save(creator=player, status=0)
+        game = serializer.save(
+            creator=player,
+            status=0,
+            difficulty=request.data.get('difficulty', 0)
+            )
+        
+        request.user.total_games += 1
+        request.user.save()
         
         return Response(serializer.data, status=201)
 
@@ -51,6 +59,8 @@ class JoinGameView(APIView):
         
         game.opponent = request.user
         game.status = 2  # in_progress
+        request.user.total_games += 1
+        request.user.save()
         game.save()
         return Response({'message': 'Game joined successfully.'}, status=200)
 

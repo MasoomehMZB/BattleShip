@@ -53,8 +53,8 @@ export default function GameHistory() {
                 <td style={tdStyle}>{game.difficulty}</td>
                 <td style={tdStyle}>{game.creator}</td>
                 <td style={tdStyle}>{game.opponent || 'Waiting...'}</td>
-                <td style={{ ...tdStyle, color: game.status === 'finished' ? 'green' : 'orange' }}>
-                  {game.status === 'finished' ? 'Finished' : 'In Progress'}
+                <td style={{ ...tdStyle, color: game.status === 'Finished' ? 'green' : 'orange' }}>
+                  {game.status}
                 </td>
                 <td style={tdStyle}>{game.winner || 'TBD'}</td>
                 <td style={tdStyle}>{new Date(game.created_at).toLocaleString()}</td>
