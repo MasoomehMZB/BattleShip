@@ -15,7 +15,6 @@ from main.models import Board, Game, Player, Ship, Shot
 
 
 class CreateGameAPIView(CreateAPIView):
-    permission_classes = [IsAuthenticated]
     serializer_class = GameSerializer
 
     def create(self, request, *args, **kwargs):
