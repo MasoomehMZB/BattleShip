@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import AccountDataView, ArrangeBoardView, CreateGameAPIView, HitView, JoinGameView, RegisterAPIView, LeaderboardAPIView, MyGamesAPIView, WaitingGamesListView, GameRulesByGameView
+from api.views import AccountDataView, ArrangeBoardView, CreateGameAPIView, GetBoardShipsView, HitView, JoinGameView, RegisterAPIView, LeaderboardAPIView, MyGamesAPIView,WaitingGamesListView, GameRulesByGameView
 
 urlpatterns = [
     path('register/', RegisterAPIView.as_view()),
