@@ -13,8 +13,8 @@ urlpatterns = [
     path('game-rules/<int:game_id>/', GameRulesByGameView.as_view(), name='game-rules'),
     path('arrange-board/<int:game_id>/', ArrangeBoardView.as_view(), name='arrange-board'),
     path('hit/<int:game_id>/', HitView.as_view(), name='hit'),
+    path('opponent-ships/<int:game_id>/', GetBoardShipsView.as_view(), name='opponent-ships'),
     
     path('players/', LeaderboardAPIView.as_view()),
     path('history/', MyGamesAPIView.as_view()),
-    
     ]
