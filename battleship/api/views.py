@@ -39,14 +39,14 @@ class CreateGameAPIView(CreateAPIView):
         
         return Response(serializer.data, status=201)
 
-class JoinGameView(APIView):
+class JoinGameAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         game_id = kwargs.get('game_id')
         game = get_object_or_404(Game, id=game_id)
         
         if game.status != 0:  # Waiting
-                return Response({'error': 'Game is already full.'}, status=400)
+                return Response({'error': "You can't join this game."}, status=400)
             
         # Check if player has an unfinished game
         if (request.user.games_created.exclude(status=1).exists() or
@@ -64,7 +64,7 @@ class JoinGameView(APIView):
         return Response({'message': 'Game joined successfully.'}, status=200)
 
 
-class ArrangeBoardView(APIView):
+class ArrangeBoardAPIView(APIView):
     def post(self, request, *args, **kwargs):
         game = get_object_or_404(Game, id=kwargs.get('game_id'))
         
@@ -104,7 +104,7 @@ class ArrangeBoardView(APIView):
     
     
 
-class HitView(APIView):
+class HitAPIView(APIView):
     def post(self, request, *args, **kwargs):
         game = get_object_or_404(Game, id=kwargs.get('game_id'))
 
@@ -117,6 +117,9 @@ class HitView(APIView):
         opponent_board = game.get_opponent_board(request.user)
         if not opponent_board:
             return Response({'error': 'Opponent board not found.'}, status=404)
+        
+        if game.status != 2:  # in_progress
+            return Response({'error': 'Game is not in progress.'}, status=400)
 
         shot_serializer = ShotSerializer(data=request.data)
         shot_serializer.is_valid(raise_exception=True)
@@ -162,7 +165,7 @@ class HitView(APIView):
 
 
 # Acount data endpoint
-class AccountDataView(APIView):
+class AccountDataAPIView(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
         player = Player.objects.get(username=user.username)
@@ -206,7 +209,7 @@ class MyGamesAPIView(ListAPIView):
         ).order_by('-id')
     
 # Change personal data endpoint
-class ChangePersonalDataView(APIView):
+class ChangePersonalDataAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -222,10 +225,10 @@ class ChangePersonalDataView(APIView):
         return Response({'message': 'User data updated successfully.'}, status=200)
     
 # List ships endpoint
-class GameRulesByGameView(APIView):
+class GameRulesByGameAPIView(APIView):
     def get(self, request, game_id, *args, **kwargs):
         game = get_object_or_404(Game, id=game_id)
-        difficulty = game.difficulty
+        #difficulty = game.difficulty
         ship_rules, board_size = game.ship_rules()
         
         return Response({
@@ -242,7 +245,7 @@ class LeaderboardAPIView(ListAPIView):
         return Player.objects.order_by('-points')[:10]
                      
 # List waiting games endpoint
-class WaitingGamesListView(ListAPIView):
+class WaitingGamesListAPIView(ListAPIView):
     model = Game
     serializer_class = GameSerializer
     
@@ -252,7 +255,7 @@ class WaitingGamesListView(ListAPIView):
         return games
     
 # Get board's ships endpoint
-class GetBoardShipsView(ListAPIView):
+class GetBoardShipsAPIView(ListAPIView):
     serializer_class = ShipSerializer
 
     def get_queryset(self):
@@ -261,9 +264,35 @@ class GetBoardShipsView(ListAPIView):
 
         if self.request.user != game.creator and self.request.user != game.opponent:
             raise PermissionDenied("You are not a player in this game.")
+        
+        if game.status != 2:  # in_progress
+            return Response({'error': 'Game is not in progress.'}, status=400)
 
         board = get_object_or_404(Board, game=game, player=self.request.user)
         return board.ships.all()
+    
+class SurrenderGameAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        game = get_object_or_404(Game, id=kwargs.get('game_id'))
+        
+        if game.turn != request.user:
+            return Response({'error': 'Not your turn.'}, status=400)
+
+        if request.user != game.creator and request.user != game.opponent:
+            return Response({'error': 'You are not a player in this game.'}, status=403)
+
+        if game.status != 2:  # in_progress
+            return Response({'error': 'Game is not in progress.'}, status=400)
+        
+        opponent = game.creator if game.opponent == request.user else game.opponent
+
+        game.set_winner(opponent)
+        
+        return Response({
+                'message': 'Game over. You won!',
+                'game': GameSerializer(game).data,
+                'winner': PlayerSerializer(opponent).data
+        }, status=200)
 
     
 

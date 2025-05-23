@@ -44,7 +44,7 @@ This document describes the API endpoints available in the Battleship game backe
 - Credentials must be valid.
 
 ---
-### Get Account Data
+## Get Account Data
 
 **Endpoint:** `GET /account/`
 
@@ -61,7 +61,7 @@ This document describes the API endpoints available in the Battleship game backe
 
 ## Create a New Game
 
-**Endpoint:** `POST /games/create/`
+**Endpoint:** `POST /games/`
 
 **Description:** Create a new game. The authenticated user becomes the creator.
 
@@ -108,7 +108,7 @@ Request body: JSON object with the following field:
 
 ---
 
-### Get Game Rules by Game
+## Get Game Rules by Game
 
 **Endpoint:** `GET /games/{game_id}/rules/`
 
@@ -159,7 +159,7 @@ Example:
 
 ---
 
-### Get Board Ships
+## Get Board Ships
 
 **Endpoint:** `GET /games/{game_id}/board-ships/`
 
@@ -200,15 +200,40 @@ Example:
 - Error: `{ "error": "<validation error message>" }` (400 Bad Request)
 
 **Validations/Restrictions:**
+- Game must be in in progress status (`status == 2`).
 - It must be the user's turn.
 - User must be a player in the game.
 - Shot coordinates must be valid and not previously targeted.
 
 ---
 
+## Surrender Game
+
+**Endpoint:** `GET /games/{game_id}/surrender/`
+
+**Description:** Surrender the current game, making the opponent the winner.
+
+**Input:**
+- URL parameter: `game_id` (integer)
+
+**Output:**
+- Success: `{ "message": "Game over. You won!", "game": <game data>, "winner": <player data> }` (200 OK)
+- Error: `{ "error": "Not your turn." }` (400 Bad Request)
+- Error: `{ "error": "You are not a player in this game." }` (403 Forbidden)
+- Error: `{ "error": "Game is already finished." }` (400 Bad Request)
+
+**Validations/Restrictions:**
+- Game must be in in progress status (`status == 2`).
+- It must be the user's turn.
+- User must be a player in the game.
+- Game must not be already finished.
+
+
+---
+
 ## Additional Endpoints
 
-### List Finished Games
+## List Finished Games
 
 **Endpoint:** `GET /my-games/`
 
@@ -227,7 +252,7 @@ Example:
 
 ---
 
-### Change Personal Data
+## Change Personal Data
 
 **Endpoint:** `POST /change-personal-data/`
 
@@ -242,7 +267,7 @@ Example:
 
 ---
 
-### List Leaderboard
+## List Leaderboard
 
 **Endpoint:** `GET /leaderboard/`
 
@@ -257,7 +282,7 @@ Example:
 
 ---
 
-### List Waiting Games
+## List Waiting Games
 
 **Endpoint:** `GET /waiting-games/`
 
