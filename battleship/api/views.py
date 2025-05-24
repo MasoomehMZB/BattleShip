@@ -198,7 +198,7 @@ class RegisterAPIView(APIView):
         )
         
         return Response({'messege': 'Registeration successful'}, status=201)
-
+    
 # List history of finished games endpoint
 class MyGamesAPIView(ListAPIView):
     serializer_class = GameSerializer
@@ -228,7 +228,6 @@ class ChangePersonalDataAPIView(APIView):
 class GameRulesByGameAPIView(APIView):
     def get(self, request, game_id, *args, **kwargs):
         game = get_object_or_404(Game, id=game_id)
-        #difficulty = game.difficulty
         ship_rules, board_size = game.ship_rules()
         
         return Response({

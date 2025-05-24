@@ -6,7 +6,9 @@ This document describes the API endpoints available in the Battleship game backe
 
 ## Register a New User
 
-**Endpoint:** `POST /register/`
+**Endpoint:** `POST account/register/`
+
+**view:** RegisterAPIView
 
 **Description:** Register a new player account.
 
@@ -27,7 +29,7 @@ This document describes the API endpoints available in the Battleship game backe
 
 ## Login
 
-**Endpoint:** `POST /login/`
+**Endpoint:** `POST account/login/`
 
 **Description:** Authenticate a user and obtain an access token.
 
@@ -46,7 +48,9 @@ This document describes the API endpoints available in the Battleship game backe
 ---
 ## Get Account Data
 
-**Endpoint:** `GET /account/`
+**Endpoint:** `GET /account/me/`
+
+**view:** AccountDataAPIView
 
 **Description:** Retrieve the authenticated user's player data.
 
@@ -61,7 +65,9 @@ This document describes the API endpoints available in the Battleship game backe
 
 ## Create a New Game
 
-**Endpoint:** `POST /games/`
+**Endpoint:** `POST games/create/`
+
+**view:** CreateGameAPIView
 
 **Description:** Create a new game. The authenticated user becomes the creator.
 
@@ -90,6 +96,8 @@ Request body: JSON object with the following field:
 
 **Endpoint:** `POST /games/{game_id}/join/`
 
+**view:** JoinGameAPIView
+
 **Description:** Join a waiting game as the opponent.
 
 **Input:**
@@ -112,6 +120,8 @@ Request body: JSON object with the following field:
 
 **Endpoint:** `GET /games/{game_id}/rules/`
 
+**view:** GameRulesByGameAPIView
+
 **Description:** Get ship rules and board size for a specific game.
 
 **Output:**
@@ -121,7 +131,9 @@ Request body: JSON object with the following field:
 
 ## Arrange Board (Place Ships)
 
-**Endpoint:** `POST /games/{game_id}/arrange-board/`
+**Endpoint:** `POST /games/<int:game_id>/board/`
+
+**view:** ArrangeBoardAPIView
 
 **Description:** Arrange ships on the board for the game.
 
@@ -161,7 +173,9 @@ Example:
 
 ## Get Board Ships
 
-**Endpoint:** `GET /games/{game_id}/board-ships/`
+**Endpoint:** `GET /games/<int:game_id>/opponent/ships/`
+
+**view:** GetBoardShipsAPIView
 
 **Description:** Retrieve the list of ships placed on the authenticated user's board for a specific game.
 
@@ -181,7 +195,9 @@ Example:
 
 ## Hit (Make a Move)
 
-**Endpoint:** `POST /games/{game_id}/hit/`
+**Endpoint:** `POST /games/<int:game_id>/shots/`
+
+**view:** HitAPIView
 
 **Description:** Make a shot at the opponent's board.
 
@@ -211,6 +227,8 @@ Example:
 
 **Endpoint:** `GET /games/{game_id}/surrender/`
 
+**view:** SurrenderGameAPIView
+
 **Description:** Surrender the current game, making the opponent the winner.
 
 **Input:**
@@ -235,7 +253,9 @@ Example:
 
 ## List Finished Games
 
-**Endpoint:** `GET /my-games/`
+**Endpoint:** `GET /games/history/`
+
+**view:** MyGamesAPIView
 
 **Description:** List all finished games involving the authenticated user.
 
@@ -254,7 +274,9 @@ Example:
 
 ## Change Personal Data
 
-**Endpoint:** `POST /change-personal-data/`
+**Endpoint:** `POST /account/me/edit/`
+
+**view:** ChangePersonalDataAPIView
 
 **Description:** Change username and/or password.
 
@@ -269,7 +291,9 @@ Example:
 
 ## List Leaderboard
 
-**Endpoint:** `GET /leaderboard/`
+**Endpoint:** `GET /games/leaderboard/`
+
+**view:** LeaderboardAPIView
 
 **Description:** List top 10 players ordered by points.
 
@@ -284,7 +308,9 @@ Example:
 
 ## List Waiting Games
 
-**Endpoint:** `GET /waiting-games/`
+**Endpoint:** `GET /games/waiting/`
+
+**view:** WaitingGamesListAPIView
 
 **Description:** List games waiting for an opponent, excluding those created by the current user.
 
