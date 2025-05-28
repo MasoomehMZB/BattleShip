@@ -11,8 +11,9 @@ export default function Game() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '300px', margin: '2rem auto' }}>
         <button onClick={() => navigate('/profile')} style={buttonStyle}>Profile</button>
         <button onClick={() => navigate('/gameHistory')} style={buttonStyle}>My Game History</button>
-        <button onClick={() => navigate('/start')} style={buttonStyle}>Start Game</button>
-        <button onClick={() => navigate('/join')} style={buttonStyle}>Join Game</button>
+        <button onClick={() => navigate('/my-active-games')} style={buttonStyle}>My Active Game</button>
+        <button onClick={() => navigate('/start-game')} style={buttonStyle}>Start Game</button>
+        <button onClick={() => navigate('/join-game')} style={buttonStyle}>Join Game</button>
       </div>
     </div>
   );

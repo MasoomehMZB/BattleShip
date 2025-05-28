@@ -14,7 +14,7 @@ export default function Profile() {
       return;
     }
 
-    axios.get('http://localhost:8000/api/account/', {
+    axios.get('http://localhost:8000/api/account/me/', {
       headers: {
         Authorization: `Token ${token}`
       }

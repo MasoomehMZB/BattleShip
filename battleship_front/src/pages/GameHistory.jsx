@@ -9,7 +9,7 @@ export default function GameHistory() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/history/', {
+        const response = await axios.get('http://localhost:8000/api/games/history/', {
           headers: {
             Authorization: `Token ${localStorage.getItem('token')}`,
           },

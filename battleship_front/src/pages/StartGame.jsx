@@ -20,7 +20,7 @@ function StartGame() {
 
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/create-game/',
+        'http://localhost:8000/api/games/create/',
         { difficulty },
         {
           headers: {
