@@ -1,0 +1,106 @@
+.ship-rules-container {
+  padding: 15px;
+  background-color: rgb(39, 49, 120);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ship-rules-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 5px;
+}
+
+.ship-rule-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  background-color: rgb(39, 49, 120);
+}
+
+.ship-rule-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ship-image {
+  height: 40px;
+}
+
+.ship-instances {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 0px;
+}
+
+.ship-instance {
+  width: 30px;
+  height: 30px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(39, 49, 120);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.ship-instance-container {
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ship-instance:hover {
+  background-color: #778ba9;
+}
+
+.ship-instance.selected {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.ship-instance.placed {
+  background-color: #4CAF50;
+  color: white;
+  cursor: not-allowed;
+}
+
+.ship-instance.placed:hover {
+  background-color: #45a049;
+}
+
+
+.delete-ship-instance-button{
+  text-align: center;
+  font-size: 12px;
+  background-color: #dc3545;
+  color: white;
+  /* REMOVE ANY INLINE STYLES THAT MIGHT OVERRIDE */
+  margin: 0 !important; /* OVERRIDE INLINE MARGIN */
+}
+
+.delete-ship-instance-button:hover {
+  background-color: #ca4f5b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+
+.placement-hint {
+  color: #666;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+.ship-progress {
+  font-weight: bold;
+  color: #333;
+}

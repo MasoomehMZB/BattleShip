@@ -1,0 +1,288 @@
+:root {
+  --primary-blue: #007bff;
+  --primary-blue-hover: #0056b3;
+  --success-green: #28a745;
+  --success-green-hover: #218838;
+  --danger-red: #dc3545;
+  --danger-red-hover: #c82333;
+  --text-muted: #6c757d;
+  --border-color: #e9ecef;
+  --border-radius: 6px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --box-shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --box-shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Game Container */
+.game-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  contain: layout style;
+}
+
+.game-content {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.game-left-panel {
+  flex: 1;
+  min-width: 0;
+  max-width: 550px;
+  padding: 20px;
+  contain: layout;
+}
+
+.game-middle-panel {
+  flex: 0 0 250px;
+  width: 250px;
+  padding: 20px;
+  background-color: transparent;
+  border-radius: 8px;
+  contain: layout;
+}
+
+.game-right-panel {
+  flex: 1;
+  min-width: 0;
+  max-width: 350px;
+}
+
+.game-boards {
+  width: 100%;
+}
+
+.player-board {
+  width: 100%;
+}
+
+.game-controls {
+  width: 100%;
+}
+
+.controls-flex-container {
+  padding-inline: var(--spacing-lg);
+  margin-block-start: var(--spacing-md);
+  border-inline-start: 1px solid var(--border-color);
+}
+
+/* Button Styles - FIXED WIDTH CONSISTENCY */
+.orientation-button,
+.clear-all-button,
+.submit-button {
+  width: 100% !important; /* FORCE ALL BUTTONS TO SAME WIDTH */
+  min-width: 0; /* RESET MIN-WIDTH */
+  max-width: none; /* RESET MAX-WIDTH */
+  padding: 12px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-sizing: border-box; /* INCLUDE PADDING IN WIDTH CALCULATION */
+}
+
+.orientation-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.orientation-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.clear-all-button {
+  background-color: #dc3545;
+  color: white;
+  /* REMOVE ANY INLINE STYLES THAT MIGHT OVERRIDE */
+  margin: 0 !important; /* OVERRIDE INLINE MARGIN */
+}
+
+.clear-all-button:hover {
+  background-color: #ca4f5b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.submit-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.submit-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Info Panels - SAME WIDTH AS BUTTONS */
+.selected-ship-info,
+.ship-progress {
+  text-align: center;
+  padding: 15px;
+  background-color: #9c86d7;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  width: 100% !important; /* FORCE SAME WIDTH AS BUTTONS */
+  box-sizing: border-box; /* INCLUDE PADDING IN WIDTH CALCULATION */
+}
+
+.selected-ship-info h4,
+.ship-progress h4 {
+  margin: 0 0 8px 0;
+  color: #495057;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.selected-ship-info p,
+.ship-progress p {
+  margin: 5px 0;
+  color: #ececec;
+  font-size: 13px;
+}
+
+/* Status Messages - SAME WIDTH AS BUTTONS */
+.submit-error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  width: 100% !important; /* FORCE SAME WIDTH AS BUTTONS */
+  box-sizing: border-box;
+}
+
+.placement-hint {
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  width: 100% !important; /* FORCE SAME WIDTH AS BUTTONS */
+  box-sizing: border-box;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .game-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .game-left-panel,
+  .game-right-panel {
+    max-width: 100%;
+  }
+  
+  .game-middle-panel {
+    flex: none;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    order: 2;
+  }
+  
+  .game-right-panel {
+    order: 3;
+  }
+  
+  .controls-flex-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .orientation-button,
+  .clear-all-button,
+  .submit-button {
+    flex: 1;
+    min-width: 150px;
+    width: auto !important; /* ALLOW FLEXIBLE WIDTH ON MOBILE */
+  }
+  
+  .selected-ship-info,
+  .ship-progress {
+    flex: 1;
+    min-width: 200px;
+    width: auto !important; /* ALLOW FLEXIBLE WIDTH ON MOBILE */
+  }
+}
+
+@container game-container (max-width: 800px) {
+  .game-content {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-container {
+    padding: 15px;
+  }
+  
+  .game-content {
+    gap: 20px;
+  }
+  
+  .controls-flex-container {
+    flex-direction: column;
+  }
+  
+  .orientation-button,
+  .clear-all-button,
+  .submit-button,
+  .selected-ship-info,
+  .ship-progress {
+    width: 100% !important; /* BACK TO FULL WIDTH ON SMALL SCREENS */
+    flex: none;
+  }
+}
+
+/* Ensure proper spacing and alignment */
+.battleship-board-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.ship-rules-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Loading state */
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+  color: #6c757d;
+}
+.game-middle-panel .controls-flex-container .orientation-button,
+.game-middle-panel .controls-flex-container .clear-all-button,
+.game-middle-panel .controls-flex-container .submit-button {
+  width: 100%;
+  margin: 0;
+}

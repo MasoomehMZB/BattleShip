@@ -30,8 +30,8 @@ function MyActiveGames() {
     });
   }, []);
 
-  const handleArrangeClick = (gameId) => {
-    navigate(`/arrange/${gameId}`);
+  const handleArrangeClick = (gameId, isCreator) => {
+    navigate(`/ship-placement/${gameId}`, { state: { isCreator } });
   };
 
   return (
@@ -63,7 +63,7 @@ function MyActiveGames() {
               <li key={game.id} className="bg-green-100 p-4 rounded shadow flex justify-between items-center">
                 <span>Game #{game.id}</span>
                 <button
-                  onClick={() => handleArrangeClick(game.id)}
+                  onClick={() => handleArrangeClick(game.id, game.is_creator)}
                   className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded"
                 >
                   Arrange Board
