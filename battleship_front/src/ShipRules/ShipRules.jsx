@@ -16,7 +16,7 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    axios.get(`http://localhost:8000/api/game-rules/${gameId}/`, {
+    axios.get(`http://localhost:8000/api/games/${gameId}/rules/`, {
       headers: {
         Authorization: `Token ${token}`,
       }

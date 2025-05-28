@@ -14,7 +14,7 @@ function MyActiveGames() {
       return;
     }
 
-    axios.get('http://localhost:8000/api/history/', {
+    axios.get('http://localhost:8000/api/games/history/', {
       headers: {
         Authorization: `Token ${token}`
       }

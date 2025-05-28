@@ -13,7 +13,7 @@ export default function Login() {
     setMessage('');
 
     try {
-      const response = await axios.post('http://localhost:8000/api/login/', {
+      const response = await axios.post('http://localhost:8000/api/account/login/', {
         username,
         password,
       });

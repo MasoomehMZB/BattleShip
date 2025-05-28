@@ -113,7 +113,7 @@ const Game = () => {
     setSubmitting(true);
     setSubmitError(null);
     
-    axios.post(`http://localhost:8000/api/arrange-board/${gameId}/`, 
+    axios.post(`http://localhost:8000/api/games/${gameId}/board/`, 
       { ships: shipPositions },
       {
         headers: {
@@ -141,7 +141,7 @@ const Game = () => {
       return;
     }
 
-    axios.get(`http://localhost:8000/api/game-rules/${gameId}/`, {
+    axios.get(`http://localhost:8000/api/games/${gameId}/rules/`, {
       headers: {
         Authorization: `Token ${token}`,
       }

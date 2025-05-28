@@ -11,7 +11,7 @@ function JoinGamePage() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8000/api/waiting-games/', {
+      .get('http://localhost:8000/api/games/waiting/', {
         headers: {
           Authorization: `Token ${token}`,
         },
@@ -23,7 +23,7 @@ function JoinGamePage() {
   const handleJoin = (gameId) => {
     setJoiningId(gameId);
     axios
-      .post(`http://localhost:8000/api/join-game/${gameId}/`, {}, {
+      .post(`http://localhost:8000/api/games/${gameId}/join/`, {}, {
         headers: {
           Authorization: `Token ${token}`,
         },
