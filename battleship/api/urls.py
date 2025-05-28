@@ -1,20 +1,22 @@
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import AccountDataView, ArrangeBoardView, CreateGameAPIView, GetBoardShipsView, HitView, JoinGameView, RegisterAPIView, LeaderboardAPIView, MyGamesAPIView,WaitingGamesListView, GameRulesByGameView
+from api.views import AccountDataAPIView, ArrangeBoardAPIView, ChangePersonalDataAPIView, CreateGameAPIView, GameRulesByGameAPIView, GetBoardShipsAPIView, HitAPIView, JoinGameAPIView, RegisterAPIView, LeaderboardAPIView, MyGamesAPIView, SurrenderGameAPIView, WaitingGamesListAPIView
 
-urlpatterns = [
-    path('register/', RegisterAPIView.as_view()),
-    path('login/', obtain_auth_token, name='api_token_auth'),
-    path('account/', AccountDataView.as_view()),
+urlpatterns = [    
+    path('account/register/', RegisterAPIView.as_view()),
+    path('account/login/', obtain_auth_token, name='api_token_auth'),
+    path('account/me/', AccountDataAPIView.as_view()),
+    path('account/me/edit/', ChangePersonalDataAPIView.as_view(), name='active-games'),
     
-    path('create-game/', CreateGameAPIView.as_view()),
-    path('waiting-games/', WaitingGamesListView.as_view()),
-    path('join-game/<int:game_id>/', JoinGameView.as_view(), name='join-game'),
-    path('game-rules/<int:game_id>/', GameRulesByGameView.as_view(), name='game-rules'),
-    path('arrange-board/<int:game_id>/', ArrangeBoardView.as_view(), name='arrange-board'),
-    path('hit/<int:game_id>/', HitView.as_view(), name='hit'),
-    path('opponent-ships/<int:game_id>/', GetBoardShipsView.as_view(), name='opponent-ships'),
+    path('games/create/', CreateGameAPIView.as_view()),
+    path('games/<int:game_id>/join/', JoinGameAPIView.as_view(), name='join-game'),
+    path('games/<int:game_id>/rules/', GameRulesByGameAPIView.as_view(), name='game-rules'),
+    path('games/<int:game_id>/board/', ArrangeBoardAPIView.as_view(), name='arrange-board'),
+    path('games/<int:game_id>/shots/', HitAPIView.as_view(), name='hit'),
+    path('games/<int:game_id>/opponent/ships/', GetBoardShipsAPIView.as_view(), name='opponent-ships'),
+    path('games/<int:game_id>/surrender', SurrenderGameAPIView.as_view(), name='surrender'),
     
-    path('players/', LeaderboardAPIView.as_view()),
-    path('history/', MyGamesAPIView.as_view()),
+    path('games/leaderboard/', LeaderboardAPIView.as_view()),
+    path('games/history/', MyGamesAPIView.as_view()),
+    path('games/waiting/', WaitingGamesListAPIView.as_view(), name='active-games'),
     ]
