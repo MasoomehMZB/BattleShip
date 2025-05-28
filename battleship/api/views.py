@@ -292,6 +292,13 @@ class SurrenderGameAPIView(APIView):
                 'game': GameSerializer(game).data,
                 'winner': PlayerSerializer(opponent).data
         }, status=200)
+        
+# Turn specific endpoint
+class PlayerTurnAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        game_id = kwargs.get('game_id')
+        game = get_object_or_404(Game, id=game_id)
+        return Response({'username': game.turn.username}, status=400)
 
     
 
