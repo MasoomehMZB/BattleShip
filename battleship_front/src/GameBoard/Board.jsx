@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } f
 import BattleshipCell from "./BoardCell";
 import "./Board.css";
 
+// Modified Board component to support both ship placement and gameplay modes
 const Board = forwardRef(({ 
   boardSize, 
   selectedShip, 
@@ -9,7 +10,11 @@ const Board = forwardRef(({
   onShipPlaced,
   isCreator,
   shipPositions,
-  placedShips
+  placedShips,
+  // New props for gameplay
+  isPlayerBoard = false,
+  isOpponentBoard = false,
+  onCellClick
 }, ref) => {
 
   const gridRef = useRef([]);
@@ -22,7 +27,9 @@ const Board = forwardRef(({
     },
     clearAllShips: () => {
       clearAllShips();
-    }
+    },
+    // Add gridRef to allow GamePlay component to access cells directly
+    gridRef: gridRef
   }));
 
   useEffect(() => {
@@ -39,7 +46,7 @@ const Board = forwardRef(({
       // Reconstruct ship object from position data
       const ship = { 
         length: shipPosition.size + 1, 
-        width: shipPosition.size > 2 ? 2 : 1 
+        width: shipPosition.size > 3 ? 2 : 1 
       };
       
       const shipOrientation = shipPosition.is_vertical ? "vertical" : "horizontal";
@@ -94,7 +101,7 @@ const Board = forwardRef(({
 
   // Effect to sync board state with ship positions
   useEffect(() => {
-    if (!isCreator || !shipPositions) return;
+    if ((!isCreator && !isPlayerBoard) || !shipPositions) return;
 
     // Clear all ships first
     for (let y = 0; y < boardSize; y++) {
@@ -111,7 +118,7 @@ const Board = forwardRef(({
       try {
         const ship = { 
           length: shipPosition.size + 1, 
-          width: shipPosition.size > 2 ? 2 : 1 
+          width: shipPosition.size > 3 ? 2 : 1 
         };
         
         const shipOrientation = shipPosition.is_vertical ? "vertical" : "horizontal";
@@ -126,6 +133,16 @@ const Board = forwardRef(({
               const cellRef = gridRef.current[placeY]?.[placeX];
               if (cellRef && cellRef.setOccupied) {
                 cellRef.setOccupied(true);
+                
+                // For player's board in gameplay, show ships but don't hide them
+                if (isPlayerBoard) {
+                  cellRef.setHidden(false);
+                }
+                
+                // If the ship is sunk, update the cell status
+                if (shipPosition.sunk) {
+                  cellRef.setStatus("hit");
+                }
               }
             }
           }
@@ -134,7 +151,7 @@ const Board = forwardRef(({
         console.error("Error re-placing ship:", error);
       }
     });
-  }, [shipPositions, boardSize, isCreator]);
+  }, [shipPositions, boardSize, isCreator, isPlayerBoard]);
 
   //Function to get ship dimensions based on orientation
   const getShipDimensions = (ship, orientation) => {
@@ -219,8 +236,13 @@ const Board = forwardRef(({
 
   // Handle cell click from the cell component
   const handleCellClick = (x, y) => {
+    // For ship placement mode (Game.jsx)
     if (isCreator) {
       placeShip(x, y);
+    } 
+    // For gameplay mode (GamePlay.jsx) - only allow clicks on opponent's board
+    else if (isOpponentBoard && onCellClick) {
+      onCellClick(x, y);
     }
   };
 
@@ -248,6 +270,8 @@ const Board = forwardRef(({
                 x={x} 
                 y={y} 
                 isCreator={isCreator}
+                isPlayerBoard={isPlayerBoard}
+                isOpponentBoard={isOpponentBoard}
                 onClick={handleCellClick}
                 ref={(cellRef) => setCellRef(x, y, cellRef)}
               />

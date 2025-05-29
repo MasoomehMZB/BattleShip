@@ -38,7 +38,7 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
     if (onShipSelect) {
       const shipLength = parseInt(size) + 1;
       // Add width property for ships with length > 3
-      const shipWidth = shipLength > 3 ? 2 : 1;
+      const shipWidth = shipLength > 4 ? 2 : 1;
       
       onShipSelect({
         id: `${shipLength}-${index}`,

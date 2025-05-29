@@ -11,6 +11,7 @@ import JoinGamePage from './pages/JoinGame';
 import MyActiveGames from './pages/MyActiveGames';
 import ShipRules from './ShipRules/ShipRules';
 import ShipPlacement from './Game.jsx';
+import GamePlay from './GamePlay.jsx';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/ship-rules/:gameId" element={<ShipRules />} />
         <Route path="/my-active-games" element={<MyActiveGames />} />
         <Route path="/ship-placement/:gameId" element={<ShipPlacement />} />
+        <Route path="/game-play/:gameId" element={<GamePlay />} />
       </Routes>
     </Router>
   );

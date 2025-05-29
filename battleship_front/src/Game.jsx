@@ -212,9 +212,8 @@ const Game = () => {
                 {selectedShip && (
                   <div className="selected-ship-info">
                     <p>Selected: {selectedShip.name}</p>
-                    <p>Dimensions: {orientation === "horizontal" ? 
-                      `${selectedShip.width || 1} × ${selectedShip.length}` : 
-                      `${selectedShip.length} × ${selectedShip.width || 1}`}
+                    <p>Dimensions: 
+                     {` ${selectedShip.length} × ${selectedShip.width }`}
                     </p>
                   </div>
                 )}
