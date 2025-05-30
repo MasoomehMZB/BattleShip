@@ -147,7 +147,7 @@ class HitAPIView(APIView):
             game.set_winner(request.user)
 
             return Response({
-                'message': 'Game over. You won!',
+                'message': 'Game over!',
                 'game': GameSerializer(game).data,
                 'winner': PlayerSerializer(request.user).data
             }, status=200)
@@ -302,8 +302,11 @@ class PlayerTurnAPIView(APIView):
         game_id = kwargs.get('game_id')
         game = get_object_or_404(Game, id=game_id)
         
-        if game.winner:
-            return Response({'message': 'Game is over.', 'winner': PlayerSerializer(game.winner).data})
+        if game.winner and game.winner == request.user:
+            return Response({'message': 'You won! Game is over.', 'winner': PlayerSerializer(game.winner).data}) 
+        elif game.winner:
+            return Response({'message': 'You lost! Game is over.', 'winner': PlayerSerializer(game.winner).data})
+        
         return Response({'username': game.turn.username}
                         )
 

@@ -3,7 +3,7 @@ import Board from "../GameBoard/Board";
 import axios from "axios";
 import "./GamePlay.css";
 
-const GamePlay = ({ gameId=12 }) => {
+const GamePlay = ({ gameId=14}) => {
   const [playerShips, setPlayerShips] = useState([]);
   const [gameStatus, setGameStatus] = useState("Loading...");
   const [gameOver, setGameOver] = useState(false);
@@ -70,6 +70,8 @@ const GamePlay = ({ gameId=12 }) => {
   
   // Update checkCurrentTurn to handle game over status
   const checkCurrentTurn = async () => {
+
+    if (gameOver) return;
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -87,14 +89,14 @@ const GamePlay = ({ gameId=12 }) => {
       });
       
       // Check if game is over
-      if (response.data.message && response.data.message === 'Game is over.') {
+      if (response.data.message) {
         setGameOver(true);
         
         // Check if the winner is the current user
-        const winnerUsername = response.data.winner?.username;
-        setWinner(winnerUsername === username);
+        const winnerUsername = response.data.winner;
+        setWinner(winnerUsername);
         
-        setGameStatus(`Game over. ${winnerUsername === username ? 'You won!' : 'You lost!'}`);
+        setGameStatus(response.data.message);
         
         // Stop polling for turns if game is over
         if (turnCheckIntervalRef.current) {
@@ -338,7 +340,6 @@ const GamePlay = ({ gameId=12 }) => {
       
       {gameOver && (
         <div className="game-over-message">
-          <h2>{winner ? "You Won!" : "You Lost!"}</h2>
           <button onClick={() => window.location.href = "/games"}>
             Back to Games
           </button>
