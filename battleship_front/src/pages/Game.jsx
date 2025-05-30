@@ -9,7 +9,7 @@ export default function Game() {
       <h1>Welcome to Battleship!</h1>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '300px', margin: '2rem auto' }}>
-        <button onClick={() => navigate('/profile')} style={buttonStyle}>Profile</button>
+        <button onClick={() => navigate('/leaderboard')} style={buttonStyle}>Leader Board</button>
         <button onClick={() => navigate('/gameHistory')} style={buttonStyle}>My Game History</button>
         <button onClick={() => navigate('/my-active-games')} style={buttonStyle}>My Active Game</button>
         <button onClick={() => navigate('/start-game')} style={buttonStyle}>Start Game</button>

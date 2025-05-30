@@ -5,7 +5,7 @@ export const getPlayers = async () => {
   const token = localStorage.getItem('authToken');
 
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/players/', {
+    const response = await axios.get('http://127.0.0.1:8000/api/games/leaderboard/', {
       headers: {
         Authorization: `Token ${token}`,
       },

@@ -9,6 +9,7 @@ function Home() {
       <h1>🏴‍☠️ Welcome to Battleship</h1>
       <button onClick={() => navigate('/login')} style={btnStyle}>Login</button>
       <button onClick={() => navigate('/register')} style={btnStyle}>Register</button>
+      <button onClick={() => navigate('/profile')} style={btnStyle}>Profile</button>
       <button onClick={() => navigate('/game')} style={btnStyle}>Game Page</button>
     </div>
   );

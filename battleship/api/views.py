@@ -7,6 +7,7 @@ from django.db.models import Q
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 # Local imports
@@ -151,8 +152,9 @@ class HitAPIView(APIView):
                 'winner': PlayerSerializer(request.user).data
             }, status=200)
 
-        # Switch turns if game isn't over
-        game.switch_turn()
+        # Switch turns if it isn't a hit
+        if not hit :    
+            game.switch_turn()
 
  
         if hit and hit_ship:
@@ -265,9 +267,10 @@ class GetBoardShipsAPIView(ListAPIView):
             raise PermissionDenied("You are not a player in this game.")
         
         if game.status != 2:  # in_progress
-            return Response({'error': 'Game is not in progress.'}, status=400)
+            raise PermissionDenied("Game is not in progress.")
 
         board = get_object_or_404(Board, game=game, player=self.request.user)
+        
         return board.ships.all()
     
 class SurrenderGameAPIView(APIView):
@@ -298,7 +301,11 @@ class PlayerTurnAPIView(APIView):
     def get(self, request, *args, **kwargs):
         game_id = kwargs.get('game_id')
         game = get_object_or_404(Game, id=game_id)
-        return Response({'username': game.turn.username}, status=400)
+        
+        if game.winner:
+            return Response({'message': 'Game is over.', 'winner': PlayerSerializer(game.winner).data})
+        return Response({'username': game.turn.username}
+                        )
 
     
 

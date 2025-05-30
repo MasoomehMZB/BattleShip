@@ -1,17 +1,18 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import Login from './pages/Login';      
-import Register from './pages/Register'; 
-import GamePage from './pages/Game';
-import Profile from './pages/Profile';
-import GameHistory from './pages/GameHistory';
-import StartGame from './pages/StartGame';
-import JoinGamePage from './pages/JoinGame';
-import MyActiveGames from './pages/MyActiveGames';
-import ShipRules from './ShipRules/ShipRules';
-import ShipPlacement from './Game.jsx';
-import GamePlay from './GamePlay.jsx';
+import Login from './pages/Account/Login';      
+import Register from './pages/Account/Register'; 
+import GamePage from './pages/Game.jsx';
+import Profile from './pages/Account/Profile';
+import GameHistory from './pages/GamePages/GameHistory.jsx';
+import StartGame from './pages/GamePages/StartGame.jsx';
+import JoinGamePage from './pages/GamePages/JoinGame.jsx';
+import MyActiveGames from './pages/GamePages/MyActiveGames.jsx';
+import ShipRules from './pages/GamePages/ShipRules/ShipRules.jsx';
+import ShipPlacement from './pages/GamePages/ShipPlacement/ShipPlacement.jsx';
+import GamePlay from './pages/GamePages/GamePlay/GamePlay.jsx';
+import Leaderboard from './pages/GamePages/Leaderboard.jsx';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/my-active-games" element={<MyActiveGames />} />
         <Route path="/ship-placement/:gameId" element={<ShipPlacement />} />
         <Route path="/game-play/:gameId" element={<GamePlay />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </Router>
   );

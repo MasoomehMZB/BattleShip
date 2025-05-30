@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import Board from "./GameBoard/Board";
-import ShipRules from "./ShipRules/ShipRules";
+import Board from "../GameBoard/Board.jsx";
+import ShipRules from "../ShipRules/ShipRules";
 import axios from "axios";
-import "./Game.css";
+import "./ShipPlacement.css";
 
-const Game = () => {
+const ShipPlacement = () => {
   // Extract gameId from URL parameters and isCreator from location state
   const { gameId } = useParams();
   const location = useLocation();
@@ -255,4 +255,4 @@ const Game = () => {
   );
 };
 
-export default Game;
+export default ShipPlacement;

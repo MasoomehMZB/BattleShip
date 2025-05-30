@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getPlayers } from './Players';
+import { getPlayers } from './Leaderboard.js';
 
-function App() {
+function Leaderboard() {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
@@ -10,7 +10,7 @@ function App() {
 
   return (
     <div>
-      <h1>Players</h1>
+      <h1>Leaderboard</h1>
       <ul>
         {players.map(player => (
           <li key={player.id}>{player.username}</li>
@@ -20,4 +20,4 @@ function App() {
   );
 }
 
-export default App;
+export default Leaderboard;

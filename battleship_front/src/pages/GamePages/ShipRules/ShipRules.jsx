@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// Import the images
-import ship1 from '../assets/ship-1.png';
-import ship2 from '../assets/ship-1.png';
-import ship3 from '../assets/ship-1.png';
-import ship4 from '../assets/ship-1.png';
-import ship5 from '../assets/ship-1.png';
+// Import the images from battleship_front\src\assets\ship-1.png
+import ship1 from '../../../assets/ship-1.png';
+import ship2 from '../../../assets/ship-2.png';
+import ship3 from '../../../assets/ship-3.png';
+import ship4 from '../../../assets/ship-4.png';
+import ship5 from '../../../assets/ship-5.png';
+import ship6 from '../../../assets/ship-6.png';
 import './ShipRules.css';
 
 const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onShipDelete }) => {
@@ -58,6 +59,7 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
     '2': ship3,
     '3': ship4,
     '4': ship5,
+    '5': ship6,
   };
 
   return (
@@ -69,7 +71,7 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
           <div key={size} className="ship-rule-item">
             <div className="ship-rule-header">
               <img
-                src={shipImages[size] || ''}
+                src={shipImages[size-1] || ''}
                 alt={`Ship size ${parseInt(size)+1}`}
                 className="ship-image"
               />
