@@ -88,3 +88,29 @@
     margin-bottom: 30px;
   }
 }
+
+.game-controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.surrender-button {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.surrender-button:hover {
+  background-color: #c9302c;
+}
+
+.surrender-button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}

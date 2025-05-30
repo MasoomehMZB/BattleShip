@@ -139,10 +139,8 @@ const Board = forwardRef(({
                 cellRef.setOccupied(true);
                 
                 // For player's board, always show ships
-                console.log("isPlayerBoard:", isPlayerBoard);
                 if (isPlayerBoard) {
                   cellRef.setHidden(false);
-                  console.log(`Setting cell at (${placeX}, ${placeY}) to occupied`);
                 }
                 
                 // If the ship is sunk, update the cell status

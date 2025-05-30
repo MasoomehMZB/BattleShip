@@ -4,7 +4,7 @@ import "./BoardCell.css";
 const BattleshipCell = forwardRef(({ 
   x, 
   y, 
-  isCreator = false, 
+  isCreating = false, 
   isPlayerBoard = false,
   isOpponentBoard = false,
   onClick 
@@ -23,7 +23,7 @@ const BattleshipCell = forwardRef(({
 
   const handleClick = () => {
     // Only allow clicks in ship placement mode or on opponent's board in gameplay mode
-    if (isCreator || isOpponentBoard) {
+    if (isCreating || isOpponentBoard) {
       if (onClick) {
         onClick(x, y);
       }
@@ -40,7 +40,7 @@ const BattleshipCell = forwardRef(({
     }
     
     // For player's own board or creator mode, show ships if occupied
-    if ((isPlayerBoard || isCreator) && occupied) {
+    if ((isPlayerBoard || isCreating) && occupied) {
       return "🚢"; // Show ship sticker for occupied cells
     }
     
@@ -61,7 +61,7 @@ const BattleshipCell = forwardRef(({
       classes += ` ${status}`;
     }
     
-    if (occupied && (isPlayerBoard || isCreator || !hidden)) {
+    if (occupied && (isPlayerBoard || isCreating || !hidden)) {
       classes += " occupied";
     }
     

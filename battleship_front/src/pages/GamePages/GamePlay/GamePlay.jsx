@@ -3,7 +3,7 @@ import Board from "../GameBoard/Board";
 import axios from "axios";
 import "./GamePlay.css";
 
-const GamePlay = ({ gameId=12 }) => {
+const GamePlay = ({ gameId=11 }) => {
   const [playerShips, setPlayerShips] = useState([]);
   const [gameStatus, setGameStatus] = useState("Loading...");
   const [gameOver, setGameOver] = useState(false);
@@ -34,7 +34,7 @@ const GamePlay = ({ gameId=12 }) => {
       })
       .finally(() => {
         // Start polling for turn updates only after initial data is loaded
-        turnCheckIntervalRef.current = setInterval(checkCurrentTurn, 10000);
+        turnCheckIntervalRef.current = setInterval(checkCurrentTurn, 5000);
       });
     
     // Cleanup interval on component unmount
@@ -302,6 +302,67 @@ const GamePlay = ({ gameId=12 }) => {
     handleCellAttack(x, y);
   };
 
+  // Add this function to handle surrender
+  const handleSurrender = async () => {
+    try {
+      // Confirm with the user before surrendering
+      if (!window.confirm("Are you sure you want to surrender this game?")) {
+        return;
+      }
+      
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setErrorMessage("Authentication token not found");
+        return;
+      }
+      
+      setLoading(true);
+      
+      // Changed from POST to GET
+      const response = await axios.get(
+        `http://localhost:8000/api/games/${gameId}/surrender/`,
+        {
+          headers: {
+            Authorization: `Token ${token}`
+          }
+        }
+      );
+      
+      // Handle successful surrender
+      if (response.status === 200) {
+        setGameOver(true);
+        setWinner(false); // You surrendered, so you lost
+        setGameStatus("You surrendered. Game over.");
+        
+        // Stop polling for turns if game is over
+        if (turnCheckIntervalRef.current) {
+          clearInterval(turnCheckIntervalRef.current);
+        }
+      }
+    } catch (error) {
+      console.error("Error surrendering game:", error);
+      if (error.response) {
+        setErrorMessage(error.response.data.error || "An error occurred while surrendering.");
+        
+        // Handle specific error cases
+        if (error.response.status === 400) {
+          if (error.response.data.error === "Game is not in progress.") {
+            setGameStatus("This game is already over.");
+            checkCurrentTurn(); // Refresh game status
+          } else if (error.response.data.error === "Not your turn.") {
+            setErrorMessage("You can only surrender during your turn.");
+          }
+        } else if (error.response.status === 403) {
+          setErrorMessage("You are not a player in this game.");
+        }
+      } else {
+        setErrorMessage("Network error. Please check your connection.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="game-play-container">
       <h2 className="game-status">
@@ -311,6 +372,18 @@ const GamePlay = ({ gameId=12 }) => {
       {errorMessage && (
         <div className="error-message">{errorMessage}</div>
       )}
+      
+      <div className="game-controls">
+        {!gameOver && (
+          <button 
+            className="surrender-button" 
+            onClick={handleSurrender}
+            disabled={loading}
+          >
+            Surrender
+          </button>
+        )}
+      </div>
       
       <div className="boards-container">
         <div className="board-wrapper">
