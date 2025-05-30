@@ -6,10 +6,10 @@ import axios from "axios";
 import "./ShipPlacement.css";
 
 const ShipPlacement = () => {
-  // Extract gameId from URL parameters and isCreator from location state
+  // Extract gameId from URL parameters and isCreating from location state
   const { gameId } = useParams();
   const location = useLocation();
-  const isCreator = location.state?.isCreator ?? true;
+  const isCreating = location.state?.isCreating ?? true;
   
   // State variables
   const [boardSize, setBoardSize] = useState(10);
@@ -169,14 +169,14 @@ const ShipPlacement = () => {
         <div className="game-left-panel">
           <div className="game-boards">
             <div className="player-board">
-              <h3>{isCreator ? "Your Fleet" : "Opponent's Fleet"}</h3>
+              <h3>{isCreating ? "Your Fleet" : "Opponent's Fleet"}</h3>
               <Board 
                 ref={boardRef}
                 boardSize={boardSize} 
                 selectedShip={selectedShip}
                 orientation={orientation}
                 onShipPlaced={handleShipPlaced}
-                isCreator={isCreator}
+                isCreating={isCreating}
                 shipPositions={shipPositions}
                 placedShips={placedShips}
               />
@@ -184,7 +184,7 @@ const ShipPlacement = () => {
           </div>
         </div>
         
-        {isCreator && (
+        {isCreating && (
           <div className="game-middle-panel">
             <div className="game-controls">
               <div className="controls-flex-container">
@@ -239,7 +239,7 @@ const ShipPlacement = () => {
         )}
         
         <div className="game-right-panel">
-          {isCreator ? (
+          {isCreating ? (
             <ShipRules 
               gameId={gameId} 
               onShipSelect={handleShipSelect}

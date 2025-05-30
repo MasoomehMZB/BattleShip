@@ -10,7 +10,6 @@ const Board = forwardRef(({
   onShipPlaced,
   isCreating,
   shipPositions,
-  placedShips,
   // New props for gameplay
   isPlayerBoard = false,
   isOpponentBoard = false,
@@ -134,15 +133,12 @@ const Board = forwardRef(({
 
             if (placeX >= 0 && placeX < boardSize && placeY >= 0 && placeY < boardSize) {
               const cellRef = gridRef.current[placeY]?.[placeX];
-              console.log('grid', gridRef );
               if (cellRef && cellRef.setOccupied) {
                 cellRef.setOccupied(true);
                 
                 // For player's board, always show ships
-                console.log("isPlayerBoard:", isPlayerBoard);
                 if (isPlayerBoard) {
                   cellRef.setHidden(false);
-                  console.log(`Setting cell at (${placeX}, ${placeY}) to occupied`);
                 }
                 
                 // If the ship is sunk, update the cell status
