@@ -309,7 +309,30 @@ class PlayerTurnAPIView(APIView):
         
         return Response({'username': game.turn.username}
                         )
+        
+class ShotsAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        game_id = kwargs.get('game_id')
+        game = get_object_or_404(Game, id=game_id)
 
+        if game.winner and game.winner == request.user:
+            return Response({'message': 'You won! Game is over.', 'winner': PlayerSerializer(game.winner).data})
+        elif game.winner:
+            return Response({'message': 'You lost! Game is over.', 'winner': PlayerSerializer(game.winner).data})
+
+        return Response({'username': game.turn.username}
+                        )
+
+class ShotsListAPIView(ListAPIView):
+    serializer_class = ShotSerializer
+
+    def get_queryset(self):
+        game_id = self.kwargs['game_id']
+        game = get_object_or_404(Game, id=game_id)
+        
+        shots = Shot.objects.filter(board__game=game, shooter= self.request.user)
+        
+        return shots
     
 
         

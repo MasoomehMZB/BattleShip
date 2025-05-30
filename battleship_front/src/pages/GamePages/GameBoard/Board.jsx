@@ -10,7 +10,6 @@ const Board = forwardRef(({
   onShipPlaced,
   isCreating,
   shipPositions,
-  placedShips,
   // New props for gameplay
   isPlayerBoard = false,
   isOpponentBoard = false,
@@ -134,7 +133,6 @@ const Board = forwardRef(({
 
             if (placeX >= 0 && placeX < boardSize && placeY >= 0 && placeY < boardSize) {
               const cellRef = gridRef.current[placeY]?.[placeX];
-              console.log('grid', gridRef );
               if (cellRef && cellRef.setOccupied) {
                 cellRef.setOccupied(true);
                 

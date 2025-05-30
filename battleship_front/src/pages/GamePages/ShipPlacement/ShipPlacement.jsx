@@ -9,7 +9,7 @@ const ShipPlacement = () => {
   // Extract gameId from URL parameters and isCreating from location state
   const { gameId } = useParams();
   const location = useLocation();
-  const isCreating = true;
+  const isCreating = location.state?.isCreating ?? true;
   
   // State variables
   const [boardSize, setBoardSize] = useState();
@@ -169,7 +169,7 @@ const ShipPlacement = () => {
         <div className="game-left-panel">
           <div className="game-boards">
             <div className="player-board">
-              <h3>{ "Your Fleet" }</h3>
+              <h3>{isCreating ? "Your Fleet" : "Opponent's Fleet"}</h3>
               <Board 
                 ref={boardRef}
                 boardSize={boardSize} 
