@@ -237,7 +237,7 @@ const GamePlay = ({ gameId=11 }) => {
       await ensureBoardsReady();
       
       const response = await axios.post(
-        `http://localhost:8000/api/games/${gameId}/shots/`, 
+        `http://localhost:8000/api/games/${gameId}/hits/`, 
         { x, y },
         {
           headers: {
