@@ -281,6 +281,7 @@ const GamePlay = () => {
         setGameOver(true);
         setWinner(response.data.winner);
         setGameStatus(response.data.message);
+        setErrorMessage(null);
       
         // Update the opponent's board cell
         const cellRef = opponentBoardRef.current?.gridRef?.current[y]?.[x];
@@ -474,7 +475,7 @@ const GamePlay = () => {
         {importantMessage || gameStatus}
       </h2>
       
-      {errorMessage && (
+      {!gameOver && errorMessage && (
         <div className="error-message">{errorMessage}</div>
       )}
       
