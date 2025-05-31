@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './MyActiveGame.css';
@@ -6,8 +7,6 @@ import './MyActiveGame.css';
 function MyActiveGames() {
   const [waitingGames, setWaitingGames] = useState([]);
   const [inProgressGames, setInProgressGames] = useState([]);
-  const [onGoingGames, setOnGoingGames] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [currentUser, setCurrentUser] = useState('');
@@ -30,14 +29,6 @@ function MyActiveGames() {
       }
     };
 
-      setWaitingGames(games.filter(game => game.status === 'Waiting'));
-      setInProgressGames(games.filter(game => game.status === 'In Progress'));
-      setOnGoingGames(games.filter(game => game.status === 'In Progress' || game.winner === null));
-
-    })
-    .catch(err => {
-      console.error('Error fetching my games:', err);
-    });
     const fetchGames = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -66,6 +57,12 @@ function MyActiveGames() {
 
     fetchCurrentUser();
     fetchGames();
+
+
+
+
+
+
   }, []);
 
   const handleArrangeClick = (gameId) => {
@@ -73,9 +70,6 @@ function MyActiveGames() {
   };
 
   const handlePlayClick = (gameId) => {
-    navigate(`/game-play/${gameId}`);
-  };
-
     navigate(`/gameplay/${gameId}`);
   };
 
@@ -178,57 +172,6 @@ function MyActiveGames() {
           )}
         </section>
 
-      <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-3">🚀 In Progress Games</h2>
-        {inProgressGames.length === 0 ? (
-          <p className="text-gray-500">No games currently in progress.</p>
-        ) : (
-          <ul className="space-y-3">
-            {inProgressGames.map(game => (
-              <li key={game.id} className="bg-green-100 p-4 rounded shadow flex justify-between items-center">
-                <span>Game #{game.id}</span>
-                <button
-                  onClick={() => handleArrangeClick(game.id, game.is_creator)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded"
-                >
-                  Arrange Board
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section>
-        <h2 className="text-xl font-semibold mb-3">🎯 Ongoing Games</h2>
-        {onGoingGames.length === 0 ? (
-          <p className="text-gray-500">No ongoing games at the moment.</p>
-        ) : (
-          <ul className="space-y-3">
-            {onGoingGames.map(game => (
-              <li key={game.id} className="bg-blue-100 p-4 rounded shadow flex justify-between items-center">
-                <span>Game #{game.id} {game.opponent ? `vs ${game.opponent}` : ''}</span>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handlePlayClick(game.id)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                  >
-                    Play Game
-                  </button>
-                  {game.status === 'In Progress' && (
-                    <button
-                      onClick={() => handleArrangeClick(game.id, game.is_creator)}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded"
-                    >
-                      Arrange Board
-                    </button>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
         <section className="games-section">
           <h2 className="section-title">
             🚀 In Progress Games
@@ -301,5 +244,3 @@ function MyActiveGames() {
     </div>
   );
 }
-
-export default MyActiveGames;
