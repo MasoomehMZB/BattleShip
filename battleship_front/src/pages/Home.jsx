@@ -1,24 +1,23 @@
 // src/Home.jsx
 import { useNavigate } from 'react-router-dom';
+import './Home.css';
 
 function Home() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>🏴‍☠️ Welcome to Battleship</h1>
-      <button onClick={() => navigate('/login')} style={btnStyle}>Login</button>
-      <button onClick={() => navigate('/register')} style={btnStyle}>Register</button>
-      <button onClick={() => navigate('/profile')} style={btnStyle}>Profile</button>
-      <button onClick={() => navigate('/game')} style={btnStyle}>Game Page</button>
+    <div className="home-container">
+      <div className="content-box">
+        <h1 className="home-title">🏴‍☠️ Welcome to Battleship</h1>
+        <div className="button-container">
+          <button onClick={() => navigate('/login')} className="home-button">Login</button>
+          <button onClick={() => navigate('/register')} className="home-button">Register</button>
+        </div>
+        {/* <button onClick={() => navigate('/profile')} className="home-button">Profile</button>
+        <button onClick={() => navigate('/game')} className="home-button">Game Page</button> */}
+      </div>
     </div>
   );
 }
-
-const btnStyle = {
-  margin: '10px',
-  padding: '10px 20px',
-  fontSize: '16px',
-};
 
 export default Home;
