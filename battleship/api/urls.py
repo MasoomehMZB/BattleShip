@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
-from api.views import AccountDataAPIView, ArrangeBoardAPIView, ChangePersonalDataAPIView, CreateGameAPIView, GameRulesByGameAPIView, GetBoardShipsAPIView, HitAPIView, JoinGameAPIView, PlayerTurnAPIView, RegisterAPIView, LeaderboardAPIView, MyGamesAPIView, ShotsListAPIView, SurrenderGameAPIView, WaitingGamesListAPIView
+from api.views import AccountDataAPIView, ArrangeBoardAPIView, ChangePersonalDataAPIView, CreateGameAPIView, GameBoardsCountAPIView, GameRulesByGameAPIView, GetBoardShipsAPIView, HitAPIView, JoinGameAPIView, PlayerTurnAPIView, RegisterAPIView, LeaderboardAPIView, MyGamesAPIView, ShotsListAPIView, SurrenderGameAPIView, WaitingGamesListAPIView
 
 urlpatterns = [    
     path('account/register/', RegisterAPIView.as_view()),
@@ -17,6 +17,7 @@ urlpatterns = [
     path('games/<int:game_id>/surrender/', SurrenderGameAPIView.as_view(), name='surrender'),
     path('games/<int:game_id>/turn/', PlayerTurnAPIView.as_view(), name='player-turn'),
     path('games/<int:game_id>/shots/', ShotsListAPIView.as_view()),
+    path('games/<int:game_id>/boards-count/', GameBoardsCountAPIView.as_view(), name='game-boards-count'),
     
     path('games/leaderboard/', LeaderboardAPIView.as_view()),
     path('games/history/', MyGamesAPIView.as_view()),

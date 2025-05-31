@@ -118,6 +118,17 @@
   border-color: #1e8449;
 }
 
+/* Logout button styles */
+.logout-button {
+  background: linear-gradient(45deg, #cf3636, #841e1e);
+  border-color: #841e1e;
+}
+
+.logout-button:hover {
+  background: linear-gradient(45deg, #cf3636, #841e1e);
+  border-color: #841e1e;
+}
+
 /* Reset any potential body/html margins */
 html, body {
   margin: 0;

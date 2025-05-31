@@ -35,9 +35,9 @@ function StartGame() {
 
       setMessage('✅ Game created successfully! Redirecting...');
       
-      // Redirect to ship placement after successful game creation
+      // Redirect to back to my-active-games after successful game creation
       setTimeout(() => {
-        navigate(`/ship-placement/${response.data.id}`);
+        navigate(`/my-active-games`);
       }, 1500);
 
     } catch (error) {
@@ -131,7 +131,7 @@ function StartGame() {
                       <span className="difficulty-title">Easy</span>
                     </div>
                     <div className="difficulty-details">
-                      <p>• Smaller 8x8 board</p>
+                      <p>• Smaller 10x10 board</p>
                       <p>• Fewer ships to manage</p>
                       <p>• Great for learning</p>
                     </div>
@@ -152,7 +152,7 @@ function StartGame() {
                       <span className="difficulty-title">Medium</span>
                     </div>
                     <div className="difficulty-details">
-                      <p>• Standard 10x10 board</p>
+                      <p>• Standard 15x15 board</p>
                       <p>• Balanced ship count</p>
                       <p>• Classic experience</p>
                     </div>
@@ -173,7 +173,7 @@ function StartGame() {
                       <span className="difficulty-title">Hard</span>
                     </div>
                     <div className="difficulty-details">
-                      <p>• Large 12x12 board</p>
+                      <p>• Large 20x20 board</p>
                       <p>• More ships to sink</p>
                       <p>• Ultimate challenge</p>
                     </div>

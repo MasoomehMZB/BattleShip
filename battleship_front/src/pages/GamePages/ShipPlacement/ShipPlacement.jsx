@@ -24,6 +24,7 @@ const ShipPlacement = () => {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [shipRules, setShipRules] = useState({});
+  const [bothPlayersReady, setBothPlayersReady] = useState(false);
 
   // Ref for Board component
   const boardRef = useRef(null);
@@ -93,7 +94,32 @@ const ShipPlacement = () => {
     }
   };
 
-  // Submit ship placements
+// Add after handleGoToGamePlay
+const handleBackToMainMenu = () => {
+  if (window.confirm("Are you sure you want to return to the main menu? Your ship placements will be saved.")) {
+    navigate('/game');
+  }
+};
+
+  // Add this function to check if both players have boards
+  const checkBothPlayersReady = async () => {
+    const token = localStorage.getItem("token");
+    if (!token || !gameId) return;
+
+    try {
+      const boardsResponse = await axios.get(`http://localhost:8000/api/games/${gameId}/boards-count/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      
+      setBothPlayersReady(boardsResponse.data.count === 2);
+    } catch (error) {
+      console.error("Error checking players ready status:", error);
+    }
+  };
+
+  // Modified handleSubmitPlacements function
   const handleSubmitPlacements = () => {
     const token = localStorage.getItem("token");
     if (!token || !gameId) {
@@ -127,7 +153,8 @@ const ShipPlacement = () => {
     )
       .then((res) => {
         console.log("Board arrangement submitted successfully:", res.data);
-        // setSubmitting(false);
+        // Check if both players are ready after successful submission
+        checkBothPlayersReady();
       })
       .catch((err) => {
         console.error("Error submitting board arrangement:", err);
@@ -164,6 +191,14 @@ const ShipPlacement = () => {
         setLoading(false);
       });
   }, [gameId]);
+
+  // Add useEffect for periodic checking
+  useEffect(() => {
+    if (submitting) {
+      const interval = setInterval(checkBothPlayersReady, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [submitting, gameId]);
 
   if (loading) {
     return <div className="loading">Loading game data...</div>;
@@ -243,12 +278,28 @@ const ShipPlacement = () => {
                 )}
 
                 {submitting && (
-                  <button 
-                    onClick={handleGoToGamePlay} 
-                    className="go-to-game-button"
-                  >
-                    Go to Game
-                  </button>
+                  <div className="game-status">
+                    {bothPlayersReady ? (
+                      <button 
+                        onClick={handleGoToGamePlay} 
+                        className="go-to-game-button"
+                      >
+                        Go to Game
+                      </button>
+                    ) : (
+                      <>
+                        <div className="waiting-message">
+                          Waiting for opponent to arrange their ships...
+                        </div>
+                        <button 
+                          onClick={handleBackToMainMenu} 
+                          className="back-to-menu-button"
+                        >
+                          Back to Main Menu
+                        </button>
+                      </>
+                    )}
+                  </div>
                 )}
 
                 {!areAllShipsPlaced() && shipPositions.length > 0 && (
