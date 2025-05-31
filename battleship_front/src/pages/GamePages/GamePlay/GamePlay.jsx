@@ -4,7 +4,7 @@ import Board from "../GameBoard/Board";
 import axios from "axios";
 import "./GamePlay.css";
 
-const GamePlay = ({ gameId }) => {
+const GamePlay = ({ gameId=14 }) => {
   const navigate = useNavigate();
   const [playerShips, setPlayerShips] = useState([]);
   const [gameStatus, setGameStatus] = useState("Loading...");
@@ -280,6 +280,7 @@ const GamePlay = ({ gameId }) => {
         setGameOver(true);
         setWinner(response.data.winner);
         setGameStatus(response.data.message);
+        setErrorMessage(null);
       
         // Update the opponent's board cell
         const cellRef = opponentBoardRef.current?.gridRef?.current[y]?.[x];
@@ -473,7 +474,7 @@ const GamePlay = ({ gameId }) => {
         {importantMessage || gameStatus}
       </h2>
       
-      {errorMessage && (
+      {!gameOver && errorMessage && (
         <div className="error-message">{errorMessage}</div>
       )}
       

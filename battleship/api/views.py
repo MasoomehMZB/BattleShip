@@ -246,7 +246,7 @@ class LeaderboardAPIView(ListAPIView):
     serializer_class = PlayerSerializer
     
     def get_queryset(self):
-        return Player.objects.order_by('-points')[:10]
+        return Player.objects.order_by('-points').exclude(points=0)[:10]
                      
 # List waiting games endpoint
 class WaitingGamesListAPIView(ListAPIView):
