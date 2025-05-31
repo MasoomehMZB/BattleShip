@@ -4,7 +4,7 @@ import Board from "../GameBoard/Board";
 import axios from "axios";
 import "./GamePlay.css";
 
-const GamePlay = ({ gameId=14 }) => {
+const GamePlay = ({ gameId }) => {
   const navigate = useNavigate();
   const [playerShips, setPlayerShips] = useState([]);
   const [gameStatus, setGameStatus] = useState("Loading...");
@@ -36,7 +36,7 @@ const GamePlay = ({ gameId=14 }) => {
       })
       .finally(() => {
         // Start polling for turn updates only after initial data is loaded
-        turnCheckIntervalRef.current = setInterval(checkCurrentTurn, 5000);
+        turnCheckIntervalRef.current = setInterval(checkCurrentTurn, 3000);
       });
     
     // Cleanup interval on component unmount

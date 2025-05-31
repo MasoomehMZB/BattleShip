@@ -77,7 +77,8 @@ class ArrangeBoardAPIView(APIView):
             return Response({'error': 'Game is not in the setup phase.'}, status=400)
         
         if game.boards.filter(player=request.user).exists():
-            return Response({'error': 'You have already arranged your board.'}, status=400)
+            arranged = True
+            return Response({'error': 'You have already arranged your board.','arranged' : arranged}, status=400)
 
         ships_data = request.data.get('ships', [])
         if not ships_data:

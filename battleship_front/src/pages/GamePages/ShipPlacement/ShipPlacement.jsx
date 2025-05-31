@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import Board from "../GameBoard/Board.jsx";
 import ShipRules from "../ShipRules/ShipRules";
 import axios from "axios";
 import "./ShipPlacement.css";
 
 const ShipPlacement = () => {
+  // Add navigate for redirection
+  const navigate = useNavigate();
+  
   // Extract gameId from URL parameters and isCreating from location state
   const { gameId } = useParams();
   const location = useLocation();
@@ -124,13 +127,18 @@ const ShipPlacement = () => {
     )
       .then((res) => {
         console.log("Board arrangement submitted successfully:", res.data);
-        setSubmitting(false);
+        // setSubmitting(false);
       })
       .catch((err) => {
         console.error("Error submitting board arrangement:", err);
         setSubmitError(err.response?.data?.error || "Failed to submit ship placements.");
-        setSubmitting(false);
+        setSubmitting(err.response?.data?.arranged);
       });
+  };
+
+  // Navigate to GamePlay when placement is submitted
+  const handleGoToGamePlay = () => {
+    navigate(`/game-play/${gameId}/`);
   };
 
   // Fetch game rules on mount
@@ -192,7 +200,7 @@ const ShipPlacement = () => {
                   Orientation: {orientation === "horizontal" ? "Vertical" : "Horizontal"}
                 </button>
                 
-                {placedShips.length > 0 && (
+                {placedShips.length > 0 && !submitting && (
                   <button 
                     onClick={handleClearAllShips} 
                     className="clear-all-button"
@@ -206,9 +214,9 @@ const ShipPlacement = () => {
                   className="submit-button"
                   disabled={submitting || !areAllShipsPlaced()}
                 >
-                  {submitting ? "Submitting..." : "Submit Ship Placements"}
-                </button>
-                
+                  {submitting ? "Submitted" : "Submit Ship Placements"}
+                </button>                
+
                 {selectedShip && (
                   <div className="selected-ship-info">
                     <p>Selected: {selectedShip.name}</p>
@@ -228,11 +236,27 @@ const ShipPlacement = () => {
                   </div>
                 )}
 
+                {submitting && (
+                  <div className="placement-hint">
+                    {" Click the below button to start playing."}
+                  </div>
+                )}
+
+                {submitting && (
+                  <button 
+                    onClick={handleGoToGamePlay} 
+                    className="go-to-game-button"
+                  >
+                    Go to Game
+                  </button>
+                )}
+
                 {!areAllShipsPlaced() && shipPositions.length > 0 && (
                   <div className="placement-hint">
                     Place all ships before submitting your fleet arrangement.
                   </div>
                 )}
+                
               </div>
             </div>
           </div>
