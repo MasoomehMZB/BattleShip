@@ -3,7 +3,7 @@ import Board from "../GameBoard/Board";
 import axios from "axios";
 import "./GamePlay.css";
 
-const GamePlay = ({ gameId=11 }) => {
+const GamePlay = ({ gameId=14 }) => {
   const [playerShips, setPlayerShips] = useState([]);
   const [gameStatus, setGameStatus] = useState("Loading...");
   const [gameOver, setGameOver] = useState(false);
@@ -206,10 +206,8 @@ const GamePlay = ({ gameId=11 }) => {
       const checkRefs = () => {
         if (playerBoardRef.current?.gridRef?.current && 
             opponentBoardRef.current?.gridRef?.current) {
-          console.log("Board refs are ready");
           resolve(true);
         } else {
-          console.log("Waiting for board refs to be ready...");
           setTimeout(checkRefs, 100); // Check again in 100ms
         }
       };
@@ -237,7 +235,7 @@ const GamePlay = ({ gameId=11 }) => {
       await ensureBoardsReady();
       
       const response = await axios.post(
-        `http://localhost:8000/api/games/${gameId}/hits/`, 
+        `http://localhost:8000/api/games/${gameId}/hit/`, 
         { x, y },
         {
           headers: {
@@ -276,6 +274,13 @@ const GamePlay = ({ gameId=11 }) => {
         setGameOver(true);
         setWinner(response.data.winner);
         setGameStatus(response.data.message);
+      
+        // Update the opponent's board cell
+        const cellRef = opponentBoardRef.current?.gridRef?.current[y]?.[x];
+        if (cellRef) {
+          cellRef.setStatus(response.data.hit ? "hit" : "miss");
+          cellRef.setHidden(false);
+        }
         
         // Stop polling for turns if game is over
         if (turnCheckIntervalRef.current) {

@@ -149,7 +149,8 @@ class HitAPIView(APIView):
             return Response({
                 'message': 'Game over!',
                 'game': GameSerializer(game).data,
-                'winner': PlayerSerializer(request.user).data
+                'winner': PlayerSerializer(request.user).data,
+                'hit': hit
             }, status=200)
 
         # Switch turns if it isn't a hit
