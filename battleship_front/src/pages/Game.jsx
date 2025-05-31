@@ -14,6 +14,7 @@ export default function Game() {
         <button onClick={() => navigate('/my-active-games')} style={buttonStyle}>My Active Game</button>
         <button onClick={() => navigate('/start-game')} style={buttonStyle}>Start Game</button>
         <button onClick={() => navigate('/join-game')} style={buttonStyle}>Join Game</button>
+        <button onClick={() => navigate('/edit-profile')} style={buttonStyle}>Edit Profile</button>
       </div>
     </div>
   );
@@ -28,4 +29,3 @@ const buttonStyle = {
   backgroundColor: '#333333',
   transition: '0.2s ease-in-out',
 };
-
