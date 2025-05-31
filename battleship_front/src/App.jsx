@@ -5,6 +5,7 @@ import Login from './pages/Account/Login';
 import Register from './pages/Account/Register'; 
 import GamePage from './pages/Game.jsx';
 import Profile from './pages/Account/Profile';
+import EditProfile from './pages/Account/EditProfile';
 import GameHistory from './pages/GamePages/GameHistory.jsx';
 import StartGame from './pages/GamePages/StartGame.jsx';
 import JoinGamePage from './pages/GamePages/JoinGame.jsx';
@@ -23,6 +24,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/game" element={<GamePage />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/GameHistory" element={<GameHistory />} />
         <Route path="/start-game" element={<StartGame />} />
         <Route path="/join-game" element={<JoinGamePage />} />
