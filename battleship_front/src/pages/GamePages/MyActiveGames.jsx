@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 function MyActiveGames() {
   const [waitingGames, setWaitingGames] = useState([]);
   const [inProgressGames, setInProgressGames] = useState([]);
+  const [onGoingGames, setOnGoingGames] = useState([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,6 +26,8 @@ function MyActiveGames() {
 
       setWaitingGames(games.filter(game => game.status === 'Waiting'));
       setInProgressGames(games.filter(game => game.status === 'In Progress'));
+      setOnGoingGames(games.filter(game => game.status === 'In Progress' || game.winner === null));
+
     })
     .catch(err => {
       console.error('Error fetching my games:', err);
@@ -32,6 +36,10 @@ function MyActiveGames() {
 
   const handleArrangeClick = (gameId, isCreator) => {
     navigate(`/ship-placement/${gameId}`, { state: { isCreator } });
+  };
+
+  const handlePlayClick = (gameId) => {
+    navigate(`/game-play/${gameId}`);
   };
 
   return (
@@ -53,7 +61,7 @@ function MyActiveGames() {
         )}
       </section>
 
-      <section>
+      <section className="mb-10">
         <h2 className="text-xl font-semibold mb-3">🚀 In Progress Games</h2>
         {inProgressGames.length === 0 ? (
           <p className="text-gray-500">No games currently in progress.</p>
@@ -68,6 +76,37 @@ function MyActiveGames() {
                 >
                   Arrange Board
                 </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-3">🎯 Ongoing Games</h2>
+        {onGoingGames.length === 0 ? (
+          <p className="text-gray-500">No ongoing games at the moment.</p>
+        ) : (
+          <ul className="space-y-3">
+            {onGoingGames.map(game => (
+              <li key={game.id} className="bg-blue-100 p-4 rounded shadow flex justify-between items-center">
+                <span>Game #{game.id} {game.opponent ? `vs ${game.opponent}` : ''}</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handlePlayClick(game.id)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                  >
+                    Play Game
+                  </button>
+                  {game.status === 'In Progress' && (
+                    <button
+                      onClick={() => handleArrangeClick(game.id, game.is_creator)}
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded"
+                    >
+                      Arrange Board
+                    </button>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
