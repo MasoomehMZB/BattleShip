@@ -1,5 +1,6 @@
 .ship-rules-container {
   padding: 20px;
+  padding-top:0px ;
   background: linear-gradient(135deg, #1e3c72, #2a5298);
   border-radius: 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);

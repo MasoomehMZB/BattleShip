@@ -1,6 +1,6 @@
 .battleship-cell {
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
   border: 1px solid #333;
   display: flex;
   justify-content: center;

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './MyActiveGame.css';
 
-function MyActiveGames() {
+export default function MyActiveGames() {
   const [waitingGames, setWaitingGames] = useState([]);
   const [inProgressGames, setInProgressGames] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +70,7 @@ function MyActiveGames() {
   };
 
   const handlePlayClick = (gameId) => {
-    navigate(`/gameplay/${gameId}`);
+    navigate(`/game-play/${gameId}`);
   };
 
   const getPlayerDisplay = (playerName) => {

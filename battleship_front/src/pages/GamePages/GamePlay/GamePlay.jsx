@@ -471,59 +471,64 @@ const GamePlay = () => {
 
   return (
     <div className="game-play-container">
-      <h2 className="game-status">
-        {importantMessage || gameStatus}
-      </h2>
-      
-      {!gameOver && errorMessage && (
-        <div className="error-message">{errorMessage}</div>
-      )}
-      
-      <div className="game-controls">
-        {!gameOver && (
-          <button 
-            className="surrender-button" 
-            onClick={handleSurrender}
-            disabled={loading}
-          >
-            Surrender
-          </button>
-        )}
-      </div>
-      
-      <div className="boards-container">
-        <div className="board-wrapper">
-          <h3>Your Board</h3>
-          <Board 
-            ref={playerBoardRef}
-            boardSize={boardSize}
-            isCreating={false} // Read-only mode for player's own board
-            shipPositions={playerShips}
-            isPlayerBoard={true} // New prop to identify player's board
-          />
-        </div>
+      <div className="main-game-area">
+        <div className="boards-container">
+          <div className="board-wrapper">
+            <h3>Your Board</h3>
+            <Board 
+              ref={playerBoardRef}
+              boardSize={boardSize}
+              isCreating={false}
+              shipPositions={playerShips}
+              isPlayerBoard={true}
+            />
+          </div>
         
-        <div className="board-wrapper">
-          <h3>Opponent's Board</h3>
-          <Board 
-            ref={opponentBoardRef}
-            boardSize={boardSize}
-            isCreating={false} // Not in ship placement mode
-            isOpponentBoard={true} // New prop to identify opponent's board
-            onCellClick={handleOpponentCellClick} // Pass the click handler
-          />
+          <div className="board-wrapper">
+            <h3>Opponent's Board</h3>
+            <Board 
+              ref={opponentBoardRef}
+              boardSize={boardSize}
+              isCreating={false}
+              isOpponentBoard={true}
+              onCellClick={handleOpponentCellClick}
+            />
+          </div>
         </div>
       </div>
-      
-      {gameOver && (
-        <div className="game-over-message">
-          <button onClick={() => navigate('/game')}>
-            Back to Games
-          </button>
+    
+      <div className="controls-column">
+        <h2 className="game-status">
+          {importantMessage || gameStatus}
+        </h2>
+        
+        {!gameOver && errorMessage && (
+          <div className="error-message">{errorMessage}</div>
+        )}
+        
+        <div className="game-controls">
+          {!gameOver && (
+            <button 
+              className="surrender-button" 
+              onClick={handleSurrender}
+              disabled={loading}
+            >
+              Surrender
+            </button>
+          )}
+        
+          {gameOver && (
+            <div className="game-over-message">
+              <h2>Game Over</h2>
+              <button onClick={() => navigate('/game')}>
+                Back to Games
+              </button>
+            </div>
+          )}
+        
+          {loading && <div className="loading">Loading game data...</div>}
         </div>
-      )}
-      
-      {loading && <div className="loading">Loading game data...</div>}
+      </div>
     </div>
   );
 };
