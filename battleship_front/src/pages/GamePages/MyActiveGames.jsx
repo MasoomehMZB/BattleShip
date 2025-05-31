@@ -57,32 +57,49 @@ export default function MyActiveGames() {
 
     fetchCurrentUser();
     fetchGames();
-
-
-
-
-
-
   }, []);
 
   const handlePlayClick = async (gameId) => {
-    const token = localStorage.getItem("token");
-    
     try {
-      // Try to get the player's ships for this game
-      const response = await axios.get(`http://localhost:8000/api/games/${gameId}/ships/`, {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No authentication token found");
+        return;
+      }
+
+      const response2 = await axios.get(`http://localhost:8000/api/games/${gameId}/boards-count/`, {
         headers: {
           Authorization: `Token ${token}`,
         }
       });
-      
-      // If successful, player has arranged their board
-      navigate(`/game-play/${gameId}`);
+
+      if (response2.data.count === 2) {
+        // Both players have placed ships, go to gameplay
+        navigate(`/game-play/${gameId}`);
+      } else if (response2.data.count === 1) {
+        try {
+          // Check if current player has placed their ships
+          const response = await axios.get(`http://localhost:8000/api/games/${gameId}/ships/`, {
+            headers: {
+              Authorization: `Token ${token}`,
+              
+            }  
+          });
+          // If we get here, player has ships placed, wait for opponent
+          setError("Wait for your opponent to place their ships before starting the game.");
+          return; // Or show waiting message
+        } catch (error) {
+          // Player hasn't placed ships yet
+          navigate(`/ship-placement/${gameId}`);
+        }
+      } else {
+        // No boards yet, go to ship placement
+        navigate(`/ship-placement/${gameId}`);
+      }
     } catch (error) {
-      // If error (likely 403 or 404), player hasn't arranged their board
-      navigate(`/ship-placement/${gameId}`);
+      console.error("Error checking game status:", error);
     }
-  };
+  };  
 
   const getPlayerDisplay = (playerName) => {
     if (!playerName) {
