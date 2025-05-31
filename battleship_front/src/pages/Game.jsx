@@ -14,9 +14,12 @@ export default function Game() {
           <button onClick={() => navigate('/profile')} className="game-button profile-button">
             👤 Profile
           </button>
+          <button onClick={() => navigate('/edit-profile')} className="game-button">
+            ✏️ Edit Profile
+          </button>
           <button onClick={() => navigate('/leaderboard')} className="game-button">
             🏆 Leader Board
-          </button>
+          </button>          
           <button onClick={() => navigate('/gameHistory')} className="game-button">
             📜 My Game History
           </button>
