@@ -13,9 +13,16 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
   const [shipRules, setShipRules] = useState({});
   const [boardSize, setBoardSize] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("Authentication required");
+      setLoading(false);
+      return;
+    }
 
     axios.get(`http://localhost:8000/api/games/${gameId}/rules/`, {
       headers: {
@@ -25,9 +32,11 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
       .then((res) => {
         setShipRules(res.data.ship_rules || {});
         setBoardSize(res.data.board_size);
+        setError('');
       })
       .catch((err) => {
         console.error("Error fetching game rules:", err);
+        setError("Failed to load game rules");
         setShipRules({}); // Ensure shipRules is an empty object on error
       })
       .finally(() => {
@@ -50,7 +59,49 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
     }
   };
 
-  if (loading) return <p>Loading game rules...</p>;
+  const handleDeleteClick = (shipId) => {
+    if (onShipDelete && placedShips.includes(shipId)) {
+      onShipDelete(shipId);
+    }
+  };
+
+  const getShipProgress = () => {
+    const totalShips = Object.values(shipRules).reduce((sum, count) => sum + count, 0);
+    const placedCount = placedShips.length;
+    return { placed: placedCount, total: totalShips };
+  };
+
+  const getShipTypeProgress = (size, count) => {
+    const shipLength = parseInt(size) + 1;
+    const placedOfThisType = placedShips.filter(shipId => 
+      shipId.startsWith(`${shipLength}-`)
+    ).length;
+    return { placed: placedOfThisType, total: count };
+  };
+
+  if (loading) {
+    return (
+      <div className="ship-rules-container">
+        <div className="loading-message">
+          <div className="loading-spinner"></div>
+          <p>Loading game rules...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="ship-rules-container">
+        <div className="error-message">
+          <p>⚠️ {error}</p>
+          <button onClick={() => window.location.reload()} className="retry-button">
+            🔄 Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Map of ship images
   const shipImages = {
@@ -62,59 +113,109 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
     '5': ship6,
   };
 
+  const progress = getShipProgress();
+
   return (
     <div className="ship-rules-container">
-      <h3>Game Rules</h3>
-      <p>Board size: {boardSize} × {boardSize}</p>
-      <div className="ship-rules-list">
-        {Object.entries(shipRules || {}).map(([size, count]) => (
-          <div key={size} className="ship-rule-item">
-            <div className="ship-rule-header">
-              <img
-                src={shipImages[size-1] || ''}
-                alt={`Ship size ${parseInt(size)+1}`}
-                className="ship-image"
-              />
-              <p>Ship size {parseInt(size)+1} (×{count})</p>
-            </div>
-            <div className="ship-instances">
-                {Array.from({ length: count }).map((_, index) => {
-                const shipId = `${parseInt(size)+1}-${index}`;
-                const isSelected = selectedShipId === shipId;
-                const isPlaced = placedShips.includes(shipId);
-                
-                return (
-                  <div key={index} className="ship-instance-container">
-                    <button
-                      className={`ship-instance ${isSelected ? 'selected' : ''} ${isPlaced ? 'placed' : ''}`}
-                      onClick={() => handleShipClick(size, index)}
-                      disabled={isPlaced}
-                    >
-                      {isPlaced ? '✓' : index + 1}
-                    </button>
-                    {isPlaced && onShipDelete && (
-                      <button
-                        className="delete-ship-instance-button"
-                        onClick={() => {
-                          // Validate ship exists before deletion
-                          if (placedShips.includes(shipId)) {
-                            onShipDelete(shipId);
-                          } else {
-                            console.warn(`Ship ${shipId} not found in placed ships`);
-                          }
-                        }}
-                        title="Delete this ship placement"
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+      <div className="ship-rules-header">
+        <h3 className="ship-rules-title">🚢 Fleet Configuration</h3>
+        <div className="board-info">
+          <span className="board-size">Board: {boardSize} × {boardSize}</span>
+        </div>
+        <div className="fleet-progress">
+        <div className="progress-header">
+          <span className="progress-label">Fleet Deployment Progress</span>
+          <span className="progress-count">
+            {progress.placed}/{progress.total} Ships Deployed
+          </span>
+        </div>
+        <div className="progress-bar">
+          <div 
+            className="progress-fill" 
+            style={{ width: `${(progress.placed / progress.total) * 100}%` }}
+          ></div>
+        </div>
+        {progress.placed === progress.total && (
+          <div className="progress-complete">
+            ✅ Fleet Ready for Battle!
           </div>
-        ))}
+        )}
       </div>
+      </div>
+
+
+
+      <div className="ship-rules-list">
+        {Object.entries(shipRules || {}).map(([size, count]) => {
+          const shipLength = parseInt(size) + 1;
+          const typeProgress = getShipTypeProgress(size, count);
+          
+          return (
+            <div key={size} className="ship-rule-item">
+              <div className="ship-rule-header">
+                <div className="ship-info">
+                  <img
+                    src={shipImages[size-1] || ''}
+                    alt={`Ship size ${shipLength}`}
+                    className="ship-image"
+                  />
+                  <div className="ship-details">
+                    <h4 className="ship-name">
+                      {shipLength === 2 ? 'Destroyer' :
+                       shipLength === 3 ? 'Submarine' :
+                       shipLength === 4 ? 'Cruiser' :
+                       shipLength === 5 ? 'Battleship' :
+                       shipLength === 6 ? 'Carrier' : `Ship`}
+                    </h4>
+                    <p className="ship-description">
+                      Size: {shipLength} cells • Quantity: {count}
+                    </p>
+                  </div>
+                </div>
+                <div className="ship-type-progress">
+                  <span className="type-progress-text">
+                    {typeProgress.placed}/{typeProgress.total}
+                  </span>
+                  {typeProgress.placed === typeProgress.total && (
+                    <span className="type-complete">✅</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="ship-instances">
+                {Array.from({ length: count }).map((_, index) => {
+                  const shipId = `${shipLength}-${index}`;
+                  const isSelected = selectedShipId === shipId;
+                  const isPlaced = placedShips.includes(shipId);
+                  
+                  return (
+                    <div key={index} className="ship-instance-container">
+                      <button
+                        className={`ship-instance ${isSelected ? 'selected' : ''} ${isPlaced ? 'placed' : ''}`}
+                        onClick={() => handleShipClick(size, index)}
+                        disabled={isPlaced}
+                        title={isPlaced ? 'Ship deployed' : 'Click to select ship'}
+                      >
+                        {isPlaced ? '⚓' : index + 1}
+                      </button>
+                      {isPlaced && onShipDelete && (
+                        <button
+                          className="delete-ship-instance-button"
+                          onClick={() => handleDeleteClick(shipId)}
+                          title="Remove this ship from board"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
     </div>
   );
 };
