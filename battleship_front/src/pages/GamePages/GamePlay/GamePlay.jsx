@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
+import {  useParams, useNavigate } from 'react-router-dom';
 import Board from "../GameBoard/Board";
 import axios from "axios";
 import "./GamePlay.css";
 
-const GamePlay = ({ gameId=14 }) => {
+const GamePlay = () => {
+  const { gameId } = useParams();
   const navigate = useNavigate();
   const [playerShips, setPlayerShips] = useState([]);
   const [gameStatus, setGameStatus] = useState("Loading...");
