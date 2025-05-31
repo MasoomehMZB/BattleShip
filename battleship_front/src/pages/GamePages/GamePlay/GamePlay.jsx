@@ -3,7 +3,7 @@ import Board from "../GameBoard/Board";
 import axios from "axios";
 import "./GamePlay.css";
 
-const GamePlay = ({ gameId=11 }) => {
+const GamePlay = ({ gameId=14 }) => {
   const [playerShips, setPlayerShips] = useState([]);
   const [gameStatus, setGameStatus] = useState("Loading...");
   const [gameOver, setGameOver] = useState(false);
@@ -15,6 +15,8 @@ const GamePlay = ({ gameId=11 }) => {
   const [username, setUsername] = useState("");
   const [importantMessage, setImportantMessage] = useState("");
   const [messageTimeout, setMessageTimeout] = useState(null);
+  const [shotsSyncInterval, setShotsSyncInterval] = useState(null);
+  const [lastSyncedShots, setLastSyncedShots] = useState({ player: [], opponent: [] });
   
   const playerBoardRef = useRef(null);
   const opponentBoardRef = useRef(null);
@@ -28,19 +30,25 @@ const GamePlay = ({ gameId=11 }) => {
       .then(() => fetchPlayerShips())
       .then(() => fetchCurrentUsername())
       .then(() => checkCurrentTurn())
+      .then(() => syncShotsWithServer()) // Use the new sync function
       .catch(error => {
         console.error("Error in initialization sequence:", error);
         setErrorMessage("Failed to initialize game properly. Please refresh.");
       })
       .finally(() => {
-        // Start polling for turn updates only after initial data is loaded
+        // Start polling for turns and shots updates
         turnCheckIntervalRef.current = setInterval(checkCurrentTurn, 5000);
+        const shotsInterval = setInterval(syncShotsWithServer, 4000); // Poll every 4 seconds
+        setShotsSyncInterval(shotsInterval);
       });
     
-    // Cleanup interval on component unmount
+    // Cleanup intervals on component unmount
     return () => {
       if (turnCheckIntervalRef.current) {
         clearInterval(turnCheckIntervalRef.current);
+      }
+      if (shotsSyncInterval) {
+        clearInterval(shotsSyncInterval);
       }
       if (messageTimeout) {
         clearTimeout(messageTimeout);
@@ -206,10 +214,10 @@ const GamePlay = ({ gameId=11 }) => {
       const checkRefs = () => {
         if (playerBoardRef.current?.gridRef?.current && 
             opponentBoardRef.current?.gridRef?.current) {
-          console.log("Board refs are ready");
+          //console.log("Board refs are ready");
           resolve(true);
         } else {
-          console.log("Waiting for board refs to be ready...");
+          //console.log("Waiting for board refs to be ready...");
           setTimeout(checkRefs, 100); // Check again in 100ms
         }
       };
@@ -237,7 +245,7 @@ const GamePlay = ({ gameId=11 }) => {
       await ensureBoardsReady();
       
       const response = await axios.post(
-        `http://localhost:8000/api/games/${gameId}/hits/`, 
+        `http://localhost:8000/api/games/${gameId}/hit/`, 
         { x, y },
         {
           headers: {
@@ -251,25 +259,21 @@ const GamePlay = ({ gameId=11 }) => {
       if (response.status === 201) {
         const { hit, ship } = response.data;
         
-        // Update the opponent's board cell
-        const cellRef = opponentBoardRef.current?.gridRef?.current[y]?.[x];
-        if (cellRef) {
-          cellRef.setStatus(hit ? "hit" : "miss");
-          cellRef.setHidden(false);
-          
-          // If a ship was sunk, we might want to show it completely
-          if (ship && ship.sunk) {
-            const sunkMessage = `You sunk a ship of size ${ship.size + 1}!`;
-            showImportantMessage(sunkMessage, 7000); // Show for 7 seconds
-          } else {
-            setGameStatus(hit ? "Hit! Your turn again." : "Miss! Waiting for opponent...");
-          }
+        // Immediately update the cell with the result
+        updateShotImmediately(x, y, hit, true);
+        
+        // If a ship was sunk, show message
+        if (ship && ship.sunk) {
+          const sunkMessage = `You sunk a ship of size ${ship.size + 1}!`;
+          showImportantMessage(sunkMessage, 7000); // You'll need to implement this function
         } else {
-          console.error(`Cell reference not found at (${x}, ${y})`);
+          setGameStatus(hit ? "Hit! Your turn again." : "Miss! Waiting for opponent...");
         }
         
-        // Check turn after attack
-        checkCurrentTurn();
+        // Check turn after attack (but don't sync shots immediately to avoid conflicts)
+        setTimeout(() => {
+          checkCurrentTurn();
+        }, 1000);
       } 
       // Handle game over
       else if (response.status === 200 && response.data.message) {
@@ -277,14 +281,22 @@ const GamePlay = ({ gameId=11 }) => {
         setWinner(response.data.winner);
         setGameStatus(response.data.message);
         
-        // Stop polling for turns if game is over
+        // Stop polling for turns and shots if game is over
         if (turnCheckIntervalRef.current) {
           clearInterval(turnCheckIntervalRef.current);
+        }
+        if (shotsSyncInterval) {
+          clearInterval(shotsSyncInterval);
         }
       }
     } catch (error) {
       console.error("Error attacking cell:", error);
       if (error.response) {
+        console.error("Full error response:", {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
         setErrorMessage(error.response.data.error || "An error occurred during your attack.");
         
         // Handle specific error cases
@@ -362,6 +374,89 @@ const GamePlay = ({ gameId=11 }) => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const syncShotsWithServer = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("Authentication token not found");
+        return;
+      }
+
+      const response = await axios.get(
+        `http://localhost:8000/api/games/${gameId}/shots/`,
+        {
+          headers: {
+            Authorization: `Token ${token}`
+          }
+        }
+      );
+
+      const { player_shots, opponent_shots } = response.data;
+
+      // Ensure boards are ready before updating
+      await ensureBoardsReady();
+
+      // Update opponent's board with player's shots (what you shot at opponent)
+      player_shots.forEach(shot => {
+        const cellRef = opponentBoardRef.current?.gridRef?.current[shot.y]?.[shot.x];
+        if (cellRef) {
+          const currentStatus = cellRef.getStatus?.();
+          const expectedStatus = shot.hit ? "hit" : "miss";
+        
+          // Only update if status is different or cell is hidden
+          if (currentStatus !== expectedStatus || currentStatus === "hidden") {
+            cellRef.setStatus(expectedStatus);
+            cellRef.setHidden(false);
+          }
+        }
+      });
+
+      // Update player's board with opponent's shots (what opponent shot at you)
+      opponent_shots.forEach(shot => {
+        const cellRef = playerBoardRef.current?.gridRef?.current[shot.y]?.[shot.x];
+        if (cellRef) {
+          const currentStatus = cellRef.getStatus?.();
+          const expectedStatus = shot.hit ? "hit" : "miss";
+        
+          // Only update if status is different or cell is hidden
+          if (currentStatus !== expectedStatus || currentStatus === "hidden") {
+            cellRef.setStatus(expectedStatus);
+            cellRef.setHidden(false);
+          }
+        }
+      });
+
+      // Store the synced shots to prevent unnecessary updates
+      setLastSyncedShots({
+        player: player_shots,
+        opponent: opponent_shots
+      });
+
+      //console.log(`Synced ${player_shots.length} player shots and ${opponent_shots.length} opponent shots`);
+
+    } catch (error) {
+      console.error("Error syncing shots with server:", error);
+      // Don't show error to user for background sync failures
+    }
+  };
+
+  const updateShotImmediately = (x, y, hit, isPlayerShot = true) => {
+    const boardRef = isPlayerShot ? opponentBoardRef : playerBoardRef;
+    const cellRef = boardRef.current?.gridRef?.current[y]?.[x];
+    
+    if (cellRef) {
+      cellRef.setStatus(hit ? "hit" : "miss");
+      cellRef.setHidden(false);
+    
+      // Add to last synced shots to prevent server overwrite
+      const shotData = { x, y, hit };
+      setLastSyncedShots(prev => ({
+        ...prev,
+        [isPlayerShot ? 'player' : 'opponent']: [...prev[isPlayerShot ? 'player' : 'opponent'], shotData]
+      }));
     }
   };
 
