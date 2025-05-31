@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './Login.css'
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -36,32 +37,42 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto' }}>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label><br />
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div style={{ marginTop: '10px' }}>
-          <label>Password:</label><br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" style={{ marginTop: '15px' }}>
-          Login
-        </button>
-      </form>
-      {message && <p style={{ marginTop: '15px' }}>{message}</p>}
+    <div className="login-container">
+      <div className="login-box">
+        <h2 className="login-title">🏴‍☠️ Login</h2>
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label className="form-label">Username:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="form-input"
+              placeholder="Enter your username"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-input"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <button type="submit" className="login-button">
+            Login
+          </button>
+        </form>
+        {message && (
+          <p className={message.includes('successful') ? 'success-message' : 'error-message'}>
+            {message}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
