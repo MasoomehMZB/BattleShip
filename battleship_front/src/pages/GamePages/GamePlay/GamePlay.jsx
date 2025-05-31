@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 import Board from "../GameBoard/Board";
 import axios from "axios";
 import "./GamePlay.css";
 
 const GamePlay = ({ gameId=14 }) => {
+  const navigate = useNavigate();
   const [playerShips, setPlayerShips] = useState([]);
   const [gameStatus, setGameStatus] = useState("Loading...");
   const [gameOver, setGameOver] = useState(false);
@@ -214,10 +216,8 @@ const GamePlay = ({ gameId=14 }) => {
       const checkRefs = () => {
         if (playerBoardRef.current?.gridRef?.current && 
             opponentBoardRef.current?.gridRef?.current) {
-          //console.log("Board refs are ready");
           resolve(true);
         } else {
-          //console.log("Waiting for board refs to be ready...");
           setTimeout(checkRefs, 100); // Check again in 100ms
         }
       };
@@ -280,8 +280,15 @@ const GamePlay = ({ gameId=14 }) => {
         setGameOver(true);
         setWinner(response.data.winner);
         setGameStatus(response.data.message);
+      
+        // Update the opponent's board cell
+        const cellRef = opponentBoardRef.current?.gridRef?.current[y]?.[x];
+        if (cellRef) {
+          cellRef.setStatus(response.data.hit ? "hit" : "miss");
+          cellRef.setHidden(false);
+        }
         
-        // Stop polling for turns and shots if game is over
+        // Stop polling for turns if game is over
         if (turnCheckIntervalRef.current) {
           clearInterval(turnCheckIntervalRef.current);
         }
@@ -508,7 +515,7 @@ const GamePlay = ({ gameId=14 }) => {
       
       {gameOver && (
         <div className="game-over-message">
-          <button onClick={() => window.location.href = "/games"}>
+          <button onClick={() => navigate('/game')}>
             Back to Games
           </button>
         </div>
