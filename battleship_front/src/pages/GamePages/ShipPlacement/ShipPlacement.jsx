@@ -177,7 +177,7 @@ const ShipPlacement = () => {
         <div className="game-left-panel">
           <div className="game-boards">
             <div className="player-board">
-              <h3>{isCreating ? "Your Fleet" : "Opponent's Fleet"}</h3>
+            
               <Board 
                 ref={boardRef}
                 boardSize={boardSize} 
