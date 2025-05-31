@@ -1,0 +1,221 @@
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #0f1419, #1e3c72, #2a5298, #1e3c72, #0f1419);
+  background-size: 400% 400%;
+  animation: wave 8s ease-in-out infinite;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.game-box {
+  text-align: center;
+  padding: 50px 40px;
+  border: 3px solid #0f1419;
+  border-radius: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  transform: translate(0, 0);
+}
+
+.game-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1e3c72, #2a5298, #0f1419, #1e3c72);
+  border-radius: 20px 20px 0 0;
+}
+
+.game-title {
+  color: #0f1419;
+  margin-bottom: 40px;
+  font-size: 2.8rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(30, 60, 114, 0.2);
+  letter-spacing: 1px;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 30px;
+  align-items: center;
+}
+
+.game-button {
+  padding: 15px 35px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 2px solid #1e3c72;
+  border-radius: 12px;
+  background: linear-gradient(45deg, #1e3c72, #2a5298);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 280px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.game-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.game-button:hover {
+  background: linear-gradient(45deg, #0f1419, #1e3c72);
+  border-color: #0f1419;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(30, 60, 114, 0.4);
+}
+
+.game-button:hover::before {
+  left: 100%;
+}
+
+.game-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(30, 60, 114, 0.3);
+}
+
+/* Special styling for profile button */
+.profile-button {
+  background: linear-gradient(45deg, #2ecc71, #27ae60);
+  border-color: #27ae60;
+}
+
+.profile-button:hover {
+  background: linear-gradient(45deg, #229954, #1e8449);
+  border-color: #1e8449;
+}
+
+/* Reset any potential body/html margins */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .game-box {
+    padding: 30px 25px;
+    max-width: 500px;
+    width: 85%;
+  }
+  
+  .game-title {
+    font-size: 2.2rem;
+  }
+  
+  .game-button {
+    padding: 12px 25px;
+    font-size: 16px;
+    min-width: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-box {
+    padding: 25px 20px;
+    border-radius: 15px;
+    width: 80%;
+  }
+  
+  .game-title {
+    font-size: 1.8rem;
+  }
+  
+  .button-container {
+    gap: 15px;
+    margin-top: 25px;
+  }
+  
+  .game-button {
+    padding: 10px 20px;
+    font-size: 14px;
+    min-width: 180px;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    text-shadow: 2px 2px 4px rgba(30, 60, 114, 0.2);
+  }
+  50% {
+    text-shadow: 2px 2px 8px rgba(30, 60, 114, 0.4);
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.game-box {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.game-title {
+  animation: titleGlow 3s ease-in-out infinite;
+}
+
+/* Button hover effects */
+.game-button:nth-child(1) { animation-delay: 0.1s; }
+.game-button:nth-child(2) { animation-delay: 0.2s; }
+.game-button:nth-child(3) { animation-delay: 0.3s; }
+.game-button:nth-child(4) { animation-delay: 0.4s; }
+.game-button:nth-child(5) { animation-delay: 0.5s; }
+.game-button:nth-child(6) { animation-delay: 0.6s; }
+
+/* Focus styles for accessibility */
+.game-button:focus {
+  outline: 2px solid #2a5298;
+  outline-offset: 2px;
+}
