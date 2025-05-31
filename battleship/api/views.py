@@ -13,6 +13,7 @@ from rest_framework.response import Response
 # Local imports
 from api.serializers import GameSerializer, PlayerSerializer, ShipSerializer, ShotSerializer
 from main.models import Board, Game, Player, Ship, Shot
+from django.db.models import Q
 
 
 class CreateGameAPIView(CreateAPIView):
@@ -321,18 +322,21 @@ class ShotsAPIView(APIView):
             return Response({'message': 'You lost! Game is over.', 'winner': PlayerSerializer(game.winner).data})
 
         return Response({'username': game.turn.username}
-                        )
+        )
 
-class ShotsListAPIView(ListAPIView):
-    serializer_class = ShotSerializer
-
-    def get_queryset(self):
-        game_id = self.kwargs['game_id']
+class ShotsListAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        game_id = kwargs.get('game_id')
         game = get_object_or_404(Game, id=game_id)
-        
-        shots = Shot.objects.filter(board__game=game, shooter= self.request.user)
-        
-        return shots
+
+        player_shots = Shot.objects.filter(board__game=game, shooter=request.user)
+        opponent_shots = Shot.objects.filter(board__game=game).exclude(shooter=request.user)
+
+        return Response({
+            'player_shots': ShotSerializer(player_shots, many=True).data,
+            'opponent_shots': ShotSerializer(opponent_shots, many=True).data
+        })
+
     
 
         
