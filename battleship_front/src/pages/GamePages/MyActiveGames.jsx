@@ -65,12 +65,23 @@ export default function MyActiveGames() {
 
   }, []);
 
-  const handleArrangeClick = (gameId) => {
-    navigate(`/ship-placement/${gameId}`);
-  };
-
-  const handlePlayClick = (gameId) => {
-    navigate(`/game-play/${gameId}`);
+  const handlePlayClick = async (gameId) => {
+    const token = localStorage.getItem("token");
+    
+    try {
+      // Try to get the player's ships for this game
+      const response = await axios.get(`http://localhost:8000/api/games/${gameId}/ships/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        }
+      });
+      
+      // If successful, player has arranged their board
+      navigate(`/game-play/${gameId}`);
+    } catch (error) {
+      // If error (likely 403 or 404), player hasn't arranged their board
+      navigate(`/ship-placement/${gameId}`);
+    }
   };
 
   const getPlayerDisplay = (playerName) => {
@@ -213,13 +224,6 @@ export default function MyActiveGames() {
                       </div>
                     </div>
                     <div className="game-actions">
-                      <button
-                        onClick={() => handleArrangeClick(game.id)}
-                        className="arrange-board-button"
-                        title="Arrange your ships on the board"
-                      >
-                        🚢 Arrange Board
-                      </button>
                       <button
                         onClick={() => handlePlayClick(game.id)}
                         className="play-game-button"

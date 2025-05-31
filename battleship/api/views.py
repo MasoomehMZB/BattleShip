@@ -339,6 +339,16 @@ class ShotsListAPIView(APIView):
             'opponent_shots': ShotSerializer(opponent_shots, many=True).data
         })
 
+class GameBoardsCountAPIView(APIView):
+    def get(self, request, game_id, *args, **kwargs):
+        game = get_object_or_404(Game, id=game_id)
+        
+        if request.user != game.creator and request.user != game.opponent:
+            return Response({'error': 'You are not a player in this game.'}, status=403)
+        
+        boards_count = game.boards.count()
+        
+        return Response({'count': boards_count}, status=200)
     
 
         

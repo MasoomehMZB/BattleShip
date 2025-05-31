@@ -5,6 +5,11 @@ import './Game.css';
 export default function Game() {
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   return (
     <div className="game-container">
       <div className="game-box">
@@ -31,6 +36,9 @@ export default function Game() {
           </button>
           <button onClick={() => navigate('/join-game')} className="game-button">
             ⚓ Join Game
+          </button>
+          <button onClick={handleLogout} className="game-button logout-button">
+            🚪 Logout
           </button>
         </div>
       </div>
