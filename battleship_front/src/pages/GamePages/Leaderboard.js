@@ -1,4 +1,3 @@
-// Api.js
 import axios from 'axios';
 
 export const getPlayers = async () => {
