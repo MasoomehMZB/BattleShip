@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './Register.css';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -13,7 +14,7 @@ export default function Register() {
     setMessage('');
 
     try {
-      const response = await axios.post('http://localhost:8000/api/register/', {
+      const response = await axios.post('http://localhost:8000/api/account/register/', {
         username,
         password
       });
@@ -32,32 +33,42 @@ export default function Register() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto' }}>
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label><br />
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div style={{ marginTop: '10px' }}>
-          <label>Password:</label><br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" style={{ marginTop: '15px' }}>
-          Register
-        </button>
-      </form>
-      {message && <p style={{ marginTop: '15px' }}>{message}</p>}
+    <div className="register-container">
+      <div className="register-box">
+        <h2 className="register-title">🏴‍☠️ Register</h2>
+        <form onSubmit={handleSubmit} className="register-form">
+          <div className="form-group">
+            <label className="form-label">Username:</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="form-input"
+              placeholder="Choose a username"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-input"
+              placeholder="Create a password"
+              required
+            />
+          </div>
+          <button type="submit" className="register-button">
+            Register
+          </button>
+        </form>
+        {message && (
+          <p className={message.includes('successful') ? 'success-message' : 'error-message'}>
+            {message}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
