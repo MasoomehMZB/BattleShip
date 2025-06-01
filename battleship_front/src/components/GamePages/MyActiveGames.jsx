@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './MyActiveGame.css';
+import '../../styles/components/GamePages/MyActiveGame.css';
 
 export default function MyActiveGames() {
   const [waitingGames, setWaitingGames] = useState([]);

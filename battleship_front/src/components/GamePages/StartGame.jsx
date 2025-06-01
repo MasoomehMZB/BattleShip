@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './StartGame.css';
+import '../../styles/components/GamePages/StartGame.css';
 
 function StartGame() {
   const [difficulty, setDifficulty] = useState('0');

@@ -1,5 +1,5 @@
 import React, { useState, useImperativeHandle, forwardRef } from "react";
-import "./BoardCell.css";
+import "../../../styles/components/GamePages/GameBoard/BoardCell.css";
 
 const BattleshipCell = forwardRef(({ 
   x, 

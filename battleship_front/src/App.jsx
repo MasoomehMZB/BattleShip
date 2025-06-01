@@ -1,19 +1,19 @@
 // src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Login from './pages/Account/Login';      
-import Register from './pages/Account/Register'; 
-import GamePage from './pages/Game.jsx';
-import Profile from './pages/Account/Profile';
-import EditProfile from './pages/Account/EditProfile';
-import GameHistory from './pages/GamePages/GameHistory.jsx';
-import StartGame from './pages/GamePages/StartGame.jsx';
-import JoinGamePage from './pages/GamePages/JoinGame.jsx';
-import MyActiveGames from './pages/GamePages/MyActiveGames.jsx';
-import ShipRules from './pages/GamePages/ShipRules/ShipRules.jsx';
-import ShipPlacement from './pages/GamePages/ShipPlacement/ShipPlacement.jsx';
-import GamePlay from './pages/GamePages/GamePlay/GamePlay.jsx';
-import Leaderboard from './pages/GamePages/Leaderboard.jsx';
+import Home from './components/Home';
+import Login from './components/Account/Login';      
+import Register from './components/Account/Register'; 
+import GamePage from './components/Game.jsx';
+import Profile from './components/Account/Profile';
+import EditProfile from './components/Account/EditProfile';
+import GameHistory from './components/GamePages/GameHistory.jsx';
+import StartGame from './components/GamePages/StartGame.jsx';
+import JoinGamePage from './components/GamePages/JoinGame.jsx';
+import MyActiveGames from './components/GamePages/MyActiveGames.jsx';
+import ShipRules from './components/GamePages/ShipRules/ShipRules.jsx';
+import ShipPlacement from './components/GamePages/ShipPlacement/ShipPlacement.jsx';
+import GamePlay from './components/GamePages/GamePlay/GamePlay.jsx';
+import Leaderboard from './components/GamePages/Leaderboard.jsx';
 
 function App() {
   return (

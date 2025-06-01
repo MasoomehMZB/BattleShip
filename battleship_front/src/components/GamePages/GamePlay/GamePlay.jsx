@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {  useParams, useNavigate } from 'react-router-dom';
 import Board from "../GameBoard/Board";
 import axios from "axios";
-import "./GamePlay.css";
+import "../../../styles/components/GamePages/GamePlay/GamePlay.css";
 
 const GamePlay = () => {
   const { gameId } = useParams();

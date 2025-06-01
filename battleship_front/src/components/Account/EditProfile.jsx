@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './EditProfile.css';
+import '../../styles/components/Account/EditProfile.css'; 
 
 export default function EditProfile() {
   const [username, setUsername] = useState('');

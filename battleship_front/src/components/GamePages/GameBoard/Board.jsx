@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
 import BattleshipCell from "./BoardCell";
-import "./Board.css";
+import "../../../styles/components/GamePages/GameBoard/Board.css";
 
 // Modified Board component to support both ship placement and gameplay modes
 const Board = forwardRef(({ 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './GameHistory.css';
+import '../../styles/components/GamePages/GameHistory.css';
 
 export default function GameHistory() {
   const [games, setGames] = useState([]);

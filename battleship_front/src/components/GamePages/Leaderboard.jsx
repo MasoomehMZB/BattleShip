@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPlayers } from './Leaderboard.js';
-import "./Leaderboard.css";
+import "../../styles/components/GamePages/Leaderboard.css";
 
 function Leaderboard() {
   const [players, setPlayers] = useState([]);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './JoinGame.css';
+import '../../styles/components/GamePages/JoinGame.css';
 
 function JoinGamePage() {
   const [games, setGames] = useState([]);

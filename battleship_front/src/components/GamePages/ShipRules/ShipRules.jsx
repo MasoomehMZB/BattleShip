@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// Import the images from battleship_front\src\assets\ship-1.png
+
 import ship1 from '../../../assets/ship-1.png';
 import ship2 from '../../../assets/ship-2.png';
 import ship3 from '../../../assets/ship-3.png';
 import ship4 from '../../../assets/ship-4.png';
 import ship5 from '../../../assets/ship-5.png';
 import ship6 from '../../../assets/ship-6.png';
-import './ShipRules.css';
+
+import '../../../styles/components/GamePages/ShipRules/ShipRules.css';
 
 const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onShipDelete }) => {
   const [shipRules, setShipRules] = useState({});

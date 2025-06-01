@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import Board from "../GameBoard/Board.jsx";
 import ShipRules from "../ShipRules/ShipRules";
 import axios from "axios";
-import "./ShipPlacement.css";
+import "../../../styles/components/GamePages/ShipPlacement/ShipPlacement.css";
 
 const ShipPlacement = () => {
   // Add navigate for redirection
