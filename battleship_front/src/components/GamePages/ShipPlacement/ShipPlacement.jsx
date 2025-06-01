@@ -206,9 +206,9 @@ const handleBackToMainMenu = () => {
   
   return (
     <div className="game-container">
-      <h2>Battleship Game</h2>
       
       <div className="game-content">
+        <h3>🏴‍☠️ Battleship Game</h3>
         <div className="game-left-panel">
           <div className="game-boards">
             <div className="player-board">
@@ -260,10 +260,6 @@ const handleBackToMainMenu = () => {
                     </p>
                   </div>
                 )}
-
-                <div className="ship-progress">
-                  <p>Ships Placed: {placedShips.length}/{getTotalRequiredShips()}</p>
-                </div>
 
                 {submitError && (
                   <div className="submit-error">

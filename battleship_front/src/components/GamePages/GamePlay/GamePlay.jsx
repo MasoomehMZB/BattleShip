@@ -498,16 +498,12 @@ const GamePlay = () => {
       </div>
     
       <div className="controls-column">
+
         <h2 className="game-status">
           {importantMessage || gameStatus}
-        </h2>
-        
-        {!gameOver && errorMessage && (
-          <div className="error-message">{errorMessage}</div>
-        )}
-        
-        <div className="game-controls">
-          {!gameOver && (
+        </h2>    
+
+        {!gameOver && (
             <button 
               className="surrender-button" 
               onClick={handleSurrender}
@@ -517,9 +513,14 @@ const GamePlay = () => {
             </button>
           )}
         
+        {!gameOver && errorMessage && (
+          <div className="error-message">{errorMessage}</div>
+        )}
+        
+        <div className="game-controls">
+        
           {gameOver && (
             <div className="game-over-message">
-              <h2>Game Over</h2>
               <button onClick={() => navigate('/game')}>
                 Back to Games
               </button>

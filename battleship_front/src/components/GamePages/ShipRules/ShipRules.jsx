@@ -153,7 +153,7 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
           
           return (
             <div key={size} className="ship-rule-item">
-              <div className="ship-rule-header">
+              
                 <div className="ship-info">
                   <img
                     src={shipImages[size-1] || ''}
@@ -181,7 +181,7 @@ const ShipRules = ({ gameId, onShipSelect, selectedShipId, placedShips = [], onS
                     <span className="type-complete">✅</span>
                   )}
                 </div>
-              </div>
+              
 
               <div className="ship-instances">
                 {Array.from({ length: count }).map((_, index) => {
